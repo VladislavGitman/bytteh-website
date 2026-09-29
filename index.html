@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- saved from url=(0058)https://vladislavgitman.github.io/bytteh-website/#contacts -->
-<html lang="ru" data-theme="dark"><script src="chrome-extension://pphgdbgldlmicfdkhondlafkiomnelnk/content/location/location.js" id="pphgdbgldlmicfdkhondlafkiomnelnk"></script><script src="chrome-extension://pphgdbgldlmicfdkhondlafkiomnelnk/libs/extend-native-history-api.js"></script><script src="chrome-extension://pphgdbgldlmicfdkhondlafkiomnelnk/libs/requests.js"></script><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="ru" data-theme="light"><script src="chrome-extension://pphgdbgldlmicfdkhondlafkiomnelnk/content/location/location.js" id="pphgdbgldlmicfdkhondlafkiomnelnk"></script><script src="chrome-extension://pphgdbgldlmicfdkhondlafkiomnelnk/libs/extend-native-history-api.js"></script><script src="chrome-extension://pphgdbgldlmicfdkhondlafkiomnelnk/libs/requests.js"></script><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BYTTEHMD | Обслуженная бытовая техника</title>
 <meta name="description" content="Обслуженная бытовая техника премиум-класса немецких брендов Miele, AEG, Siemens-Bosch, Neff, Liebherr.">
@@ -73,7 +73,6 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 <script>
 const themeToggle = document.querySelector('.theme-toggle');
 const savedTheme = localStorage.getItem('byttehmd-theme');
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 const setTheme = (theme) => {
 	const isDark = theme === 'dark';
 	document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
@@ -81,7 +80,7 @@ const setTheme = (theme) => {
 	themeToggle.setAttribute('aria-label', isDark ? 'Включить светлую тему' : 'Включить ночную тему');
 	themeToggle.querySelector('.theme-icon').textContent = isDark ? '☀' : '☾';
 };
-setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+setTheme(savedTheme || 'light');
 themeToggle.addEventListener('click', () => {
 	const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
 	localStorage.setItem('byttehmd-theme', nextTheme);
