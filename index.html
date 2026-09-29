@@ -31,6 +31,9 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 .product-visual{height:230px;overflow:hidden}
 .product-visual img{display:block;width:100%;height:100%;min-width:0;min-height:0;object-fit:cover;object-position:center}
 </style>
+<style>
+.form-status{flex-basis:100%;min-height:1.5em;margin:0;color:#fff;font-size:.9rem}
+</style>
 </head>
 <body __processed_b9ad8306-f9b3-45da-bc20-5ad35f1edd96__="true">
 
@@ -54,7 +57,7 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 </div><div class="product-body"><span class="tag">Стиральные</span><h3>Siemens iQ700</h3><p>Современный экономичный мотор, немецкая сборка и современный дизайн.</p><div class="product-footer"><span class="price">8000 MDL</span><button class="mini-btn">Заказать</button></div></div></article><article class="product"><div class="product-visual">
 	<img src="./assets/siemens.JPG" alt="Bosch">
 </div><div class="product-body"><span class="tag">Плиты</span><h3>Bosch на 60 см</h3><p>Индукционная варочная панель — экономичная и надежная.</p><div class="product-footer"><span class="price">6000 MDL</span><button class="mini-btn">Заказать</button></div></div></article></div></div></section>
-<section id="contacts" class="section"><div class="container"><div class="section-rule"><span>Контакты</span></div><div class="cta-block"><div><h3>Нужна консультация по технике?</h3><p>Оставьте заявку — и мы подберем подходящую модель, расскажем о состоянии техники и поможем сделать правильный выбор.</p></div><form class="form" action="https://vladislavgitman.github.io/bytteh-website/#" method="post"><input type="text" placeholder="Ваше имя" aria-label="Ваше имя"><input type="tel" placeholder="+373(__)___-___" aria-label="Телефон"><button type="submit">Отправить</button></form></div></div></section></main>
+<section id="contacts" class="section"><div class="container"><div class="section-rule"><span>Контакты</span></div><div class="cta-block"><div><h3>Нужна консультация по технике?</h3><p>Оставьте заявку — и мы подберем подходящую модель, расскажем о состоянии техники и поможем сделать правильный выбор.</p></div><form class="form" id="request-form" method="post"><input id="order-name" name="name" type="text" placeholder="Ваше имя" aria-label="Ваше имя" autocomplete="name" maxlength="80" required><input id="order-phone" name="phone" type="tel" placeholder="+373(__)___-___" aria-label="Телефон" autocomplete="tel" maxlength="30" required><input id="order-request" name="request" type="hidden" value="Консультация по технике"><button type="submit">Отправить</button><p class="form-status" id="form-status" role="status" aria-live="polite"></p></form></div></div></section></main>
 <footer><div class="container footer-inner"><div>© 2026 BYTTEHMD</div><div>Обслуженная бытовая техника премиум-класса</div><div>Тел.: +373(79)503-566</div></div></footer>
 <script>
 const themeToggle = document.querySelector('.theme-toggle');
@@ -105,12 +108,26 @@ pickerForm.addEventListener('submit', (event) => {
 	event.preventDefault();
 	updatePicker();
 });
-pickerOrder.addEventListener('click', () => {
-	const request = pickerOrder.dataset.request || '';
-	const contactTitle = document.querySelector('#contacts .cta-block h3');
-	if (contactTitle) contactTitle.textContent = `Заказать: ${request}`;
+const orderRequestInput = document.querySelector('#order-request');
+const contactTitle = document.querySelector('#contacts .cta-block h3');
+const prepareOrder = (request) => {
+	orderRequestInput.value = request || 'Консультация по технике';
+	if (contactTitle) contactTitle.textContent = `Заказать: ${orderRequestInput.value}`;
+};
+pickerOrder.addEventListener('click', () => prepareOrder(pickerOrder.dataset.request));
+document.querySelectorAll('.product').forEach((product) => {
+	const orderButton = product.querySelector('.mini-btn');
+	if (!orderButton) return;
+	orderButton.addEventListener('click', () => {
+		const model = product.querySelector('h3')?.textContent.trim() || 'Техника';
+		const price = product.querySelector('.price')?.textContent.trim() || '';
+		prepareOrder([model, price].filter(Boolean).join(', '));
+		document.querySelector('#contacts').scrollIntoView({behavior: 'smooth'});
+		history.replaceState(null, '', '#contacts');
+	});
 });
 updatePicker();
 </script>
+<script type="module" src="./firebase-submit.js"></script>
 
 </body></html>

@@ -1,0 +1,21 @@
+rules_version = '2';
+
+service cloud.firestore {
+	match /databases/{database}/documents {
+		match /orders/{orderId} {
+			allow create: if request.resource.data.keys().hasAll(['name', 'phone', 'request', 'createdAt'])
+				&& request.resource.data.keys().hasOnly(['name', 'phone', 'request', 'createdAt'])
+				&& request.resource.data.name is string
+				&& request.resource.data.name.size() >= 2
+				&& request.resource.data.name.size() <= 80
+				&& request.resource.data.phone is string
+				&& request.resource.data.phone.size() >= 5
+				&& request.resource.data.phone.size() <= 30
+				&& request.resource.data.request is string
+				&& request.resource.data.request.size() >= 1
+				&& request.resource.data.request.size() <= 240
+				&& request.resource.data.createdAt == request.time;
+			allow read, update, delete: if false;
+		}
+	}
+}
