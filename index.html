@@ -54,6 +54,7 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 .stock-count.is-unavailable{color:#a33434;font-weight:700}
 .stock-note{margin-top:8px;color:var(--muted);font-size:.88rem}
 .stock-note a{color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.footer-inner a{color:inherit;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:640px){.section{scroll-margin-top:24px}}
 </style>
 </head>
@@ -80,7 +81,7 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 	<img src="./assets/siemens-card.jpg" alt="Bosch" loading="lazy" decoding="async">
 </div><div class="product-body"><span class="tag">Плиты</span><h3>Bosch на 60 см</h3><p>Индукционная варочная панель — экономичная и надежная.</p><div class="product-footer"><span class="price">6000 MDL</span><button class="mini-btn">Заказать</button></div></div></article><p class="catalog-empty" id="catalog-empty" hidden>Сейчас в каталоге нет моделей этого бренда. Свяжитесь с нами — поможем подобрать технику.</p></div></div></section>
 <section id="contacts" class="section"><div class="container"><div class="section-rule"><span>Контакты</span></div><div class="cta-block"><div><h3>Нужна консультация по технике?</h3><p>Оставьте заявку — и мы подберем подходящую модель, расскажем о состоянии техники и поможем сделать правильный выбор.</p></div><form class="form" id="request-form" method="post"><input id="order-name" name="name" type="text" placeholder="Ваше имя" aria-label="Ваше имя" autocomplete="name" maxlength="80" required><input id="order-phone" name="phone" type="tel" placeholder="+373(__)___-___" aria-label="Телефон" autocomplete="tel" maxlength="30" required><input id="order-request" name="request" type="hidden" value="Консультация по технике"><button type="submit">Отправить</button><p class="form-status" id="form-status" role="status" aria-live="polite"></p></form></div></div></section></main>
-<footer><div class="container footer-inner"><div>© 2026 BYTTEHMD</div><div>Обслуженная бытовая техника премиум-класса</div><div>Тел.: +373(79)503-566</div></div></footer>
+<footer><div class="container footer-inner"><div>© 2026 BYTTEHMD</div><div>Обслуженная бытовая техника премиум-класса</div><div>Тел.: <a href="tel:+37379503566">+373 (79) 503-566</a></div></div></footer>
 <script>
 const themeToggle = document.querySelector('.theme-toggle');
 const savedTheme = localStorage.getItem('byttehmd-theme');
@@ -187,11 +188,10 @@ const createProductCard = (item) => {
 	const stockNote = document.createElement('p');
 	stockNote.className = 'stock-note';
 	stockNote.hidden = item.stock > 0;
-	stockNote.append(document.createTextNode('Оставьте заявку или '));
 	const phoneLink = document.createElement('a');
 	phoneLink.href = 'tel:+37379503566';
-	phoneLink.textContent = 'позвоните';
-	stockNote.append(phoneLink, document.createTextNode(' — уточним сроки поставки или подберём аналог.'));
+	phoneLink.textContent = '+373 (79) 503-566';
+	stockNote.append(document.createTextNode('Оставьте заявку или позвоните: '), phoneLink, document.createTextNode(' — уточним сроки поставки или подберём аналог.'));
 	const footer = document.createElement('div');
 	footer.className = 'product-footer';
 	const price = document.createElement('span');
@@ -256,7 +256,7 @@ productGrid.addEventListener('click', (event) => {
 		const price = product.querySelector('.price')?.textContent.trim() || '';
 		const isOutOfStock = product.querySelector('.stock-count')?.classList.contains('is-unavailable');
 		const request = isOutOfStock
-			? `Интересует ${product.dataset.brand} ${model} (нет в наличии). Уточнить сроки поставки или подобрать аналог.`
+			? `Интересует ${product.dataset.brand}${model === product.dataset.brand ? ` — ${product.querySelector('.tag')?.textContent.trim().toLowerCase()}` : ` ${model}`} (нет в наличии). Уточнить сроки поставки или подобрать аналог.`
 			: [model, price].filter(Boolean).join(', ');
 		prepareOrder(request);
 		document.querySelector('#contacts').scrollIntoView({behavior: 'smooth'});

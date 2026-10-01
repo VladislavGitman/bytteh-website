@@ -4,7 +4,7 @@ import { firebaseConfig } from './firebase-config.js';
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const database = getFirestore(app);
-const requiredTextFields = ['brand', 'model', 'category', 'description'];
+const requiredTextFields = ['brand', 'category'];
 
 const readNonNegativeNumber = (value, field, documentId) => {
 	const number = typeof value === 'number'
@@ -25,6 +25,11 @@ const readProduct = (documentSnapshot) => {
 			throw new Error(`Product ${documentSnapshot.id} has an invalid ${field} field.`);
 		}
 	}
+	for (const field of ['model', 'description']) {
+		if (data[field] !== undefined && typeof data[field] !== 'string') {
+			throw new Error(`Product ${documentSnapshot.id} has an invalid ${field} field.`);
+		}
+	}
 	const price = readNonNegativeNumber(data.price, 'price', documentSnapshot.id);
 	const stock = readNonNegativeNumber(data.stock, 'stock', documentSnapshot.id);
 	if (!Number.isInteger(stock)) {
@@ -36,9 +41,9 @@ const readProduct = (documentSnapshot) => {
 
 	return {
 		brand: data.brand.trim(),
-		model: data.model.trim(),
+		model: data.model?.trim() || data.brand.trim(),
 		category: data.category.trim(),
-		description: data.description.trim(),
+		description: data.description?.trim() || 'Уточните модель и характеристики у консультанта.',
 		price,
 		stock,
 		image: data.image?.trim() || ''
