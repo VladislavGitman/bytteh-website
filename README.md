@@ -20,11 +20,9 @@ and `description` text:
 refrigerator/freezer terms, dishwasher terms, washing-machine terms, and
 cooktop/induction/stove terms map to the corresponding picker categories.
 If a selected brand has no products in the selected category, the category and
-budget filters are cleared and all products from the selected brand are shown
-with an explanation, rather than implying that the brand sells an unrelated
-product. If the brand has products in the selected category but none are
-within budget, the combined filters remain active and the empty result is
-shown.
+budget filters are cleared and all products from the selected brand are shown.
+If the brand has products in the selected category but none are within budget,
+the combined filters remain active and the empty result is shown.
 If an image is not set for Liebherr, Miele, Siemens, or Bosch, the catalog uses
 the matching local card image when available.
 
