@@ -37,7 +37,7 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 .product-footer{margin-top:auto}
 .product-footer{gap:8px;flex-wrap:nowrap}
 .product-footer .price{min-width:0;font-size:1rem;white-space:nowrap}
-.product-footer .mini-btn{flex:0 0 auto;padding:0 12px;font-size:.75rem;white-space:nowrap}
+.product-footer .mini-btn{box-sizing:border-box;flex:0 0 132px;width:132px;padding:0 8px;font-size:.75rem;white-space:nowrap}
 </style>
 <style>
 .form-status{flex-basis:100%;min-height:1.5em;margin:0;color:#fff;font-size:.9rem}
@@ -157,18 +157,25 @@ const catalogEmpty = document.createElement('p');
 catalogEmpty.className = 'catalog-empty';
 catalogEmpty.hidden = true;
 productGrid.replaceChildren(catalogEmpty);
+const fallbackProductImages = {
+	liebherr: './assets/liebherr-card.jpg',
+	miele: './assets/miele-card.jpg',
+	siemens: './assets/siemens-card.jpg',
+	bosch: './assets/siemens-card.jpg'
+};
 const createProductCard = (item) => {
 	const product = document.createElement('article');
 	product.className = 'product';
 	product.dataset.brand = item.brand;
 	const visual = document.createElement('div');
 	visual.className = 'product-visual';
-	if (item.image) {
+	const imageSource = item.image || fallbackProductImages[item.brand.toLowerCase()];
+	if (imageSource) {
 		const image = document.createElement('img');
-		image.src = item.image;
 		image.alt = item.model;
 		image.loading = 'lazy';
 		image.decoding = 'async';
+		image.src = imageSource;
 		visual.append(image);
 	}
 	const body = document.createElement('div');

@@ -14,6 +14,8 @@ product cards when submitted. Categories are matched from the Firestore
 `category`, `model`, and `description` text: refrigerator/freezer terms,
 dishwasher terms, washing-machine terms, and cooktop/induction/stove terms map
 to the corresponding picker categories.
+If an image is not set for Liebherr, Miele, Siemens, or Bosch, the catalog uses
+the matching local card image when available.
 
 Each document must contain:
 
