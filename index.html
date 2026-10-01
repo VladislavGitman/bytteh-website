@@ -35,6 +35,9 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 .product-body{display:flex;flex:1;flex-direction:column}
 .product-body p{flex:1}
 .product-footer{margin-top:auto}
+.product-footer{gap:8px;flex-wrap:nowrap}
+.product-footer .price{min-width:0;font-size:1rem;white-space:nowrap}
+.product-footer .mini-btn{flex:0 0 auto;padding:0 12px;font-size:.75rem;white-space:nowrap}
 </style>
 <style>
 .form-status{flex-basis:100%;min-height:1.5em;margin:0;color:#fff;font-size:.9rem}
@@ -129,6 +132,9 @@ const updatePicker = () => {
 pickerForm.addEventListener('submit', (event) => {
 	event.preventDefault();
 	updatePicker();
+	showCategory(pickerCategory.value);
+	document.querySelector('#catalog').scrollIntoView({behavior: 'smooth'});
+	history.replaceState(null, '', '#catalog');
 });
 const orderRequestInput = document.querySelector('#order-request');
 const contactTitle = document.querySelector('#contacts .cta-block h3');
@@ -151,8 +157,6 @@ const catalogEmpty = document.createElement('p');
 catalogEmpty.className = 'catalog-empty';
 catalogEmpty.hidden = true;
 productGrid.replaceChildren(catalogEmpty);
-let selectedBrand = '';
-let catalogState = 'loading';
 const createProductCard = (item) => {
 	const product = document.createElement('article');
 	product.className = 'product';
@@ -207,47 +211,92 @@ const createProductCard = (item) => {
 	return product;
 };
 const brandFilters = document.querySelectorAll('[data-brand-filter]');
-const showBrand = (brand) => {
-	selectedBrand = brand;
+const categoryLabels = {
+	fridge: 'Холодильники',
+	dishwasher: 'Посудомоечные машины',
+	washer: 'Стиральные машины',
+	cooktop: 'Варочные панели'
+};
+const categoryPatterns = {
+	fridge: /холодил|морозильн/,
+	dishwasher: /посудомоеч|посудомой/,
+	washer: /стиральн/,
+	cooktop: /варочн|индукционн|плит/
+};
+let selectedBrand = '';
+let selectedCategory = '';
+let catalogState = 'loading';
+const applyCatalogFilter = () => {
 	const products = [...productGrid.querySelectorAll('.product')];
 	let visibleProducts = 0;
 	products.forEach((product) => {
-		const isVisible = !brand || product.dataset.brand?.toLowerCase() === brand.toLowerCase();
+		const isVisible = selectedBrand
+			? product.dataset.brand?.toLowerCase() === selectedBrand.toLowerCase()
+			: !selectedCategory || product.dataset.categoryKey === selectedCategory;
 		product.hidden = !isVisible;
 		if (isVisible) visibleProducts += 1;
 	});
-	catalogEmpty.textContent = brand
-		? `В каталоге пока нет моделей бренда ${brand}.`
-		: 'Каталог пока пуст.';
+	const activeFilter = selectedBrand || selectedCategory;
+	catalogEmpty.textContent = selectedBrand
+		? `В каталоге пока нет моделей бренда ${selectedBrand}.`
+		: selectedCategory
+			? `В каталоге пока нет моделей категории «${categoryLabels[selectedCategory]}».`
+			: 'Каталог пока пуст.';
 	catalogEmpty.hidden = catalogState !== 'loaded' || visibleProducts > 0;
 	catalogStatus.hidden = catalogState !== 'loading' && catalogState !== 'error';
-	catalogTitle.textContent = brand ? `Модели ${brand}` : 'Популярные модели';
-	catalogDescription.textContent = brand
-		? `Модели бренда ${brand}: товары в наличии и под заказ.`
-		: 'Техника в наличии и под заказ для кухни, дома и повседневных задач.';
-	clearBrandFilter.hidden = !brand;
+	catalogTitle.textContent = selectedBrand
+		? `Модели ${selectedBrand}`
+		: selectedCategory
+			? categoryLabels[selectedCategory]
+			: 'Популярные модели';
+	catalogDescription.textContent = selectedBrand
+		? `Модели бренда ${selectedBrand}: товары в наличии и под заказ.`
+		: selectedCategory
+			? `Товары категории «${categoryLabels[selectedCategory]}» с фотографиями, наличием и ценами.`
+			: 'Техника в наличии и под заказ для кухни, дома и повседневных задач.';
+	clearBrandFilter.hidden = !activeFilter;
 	brandFilters.forEach((filter) => {
-		if (filter.dataset.brandFilter === brand) filter.setAttribute('aria-current', 'true');
+		if (filter.dataset.brandFilter === selectedBrand) filter.setAttribute('aria-current', 'true');
 		else filter.removeAttribute('aria-current');
 	});
 };
+const showBrand = (brand) => {
+	selectedBrand = brand;
+	selectedCategory = '';
+	applyCatalogFilter();
+};
+function showCategory(category) {
+	selectedBrand = '';
+	selectedCategory = category;
+	applyCatalogFilter();
+}
 document.addEventListener('catalog-loaded', (event) => {
 	const items = event.detail;
-	productGrid.replaceChildren(...items.map(createProductCard), catalogEmpty);
+	productGrid.replaceChildren(...items.map((item) => {
+		const product = createProductCard(item);
+		const searchableCategory = `${item.category} ${item.model} ${item.description}`.toLowerCase();
+		product.dataset.categoryKey = Object.entries(categoryPatterns)
+			.find(([, pattern]) => pattern.test(searchableCategory))?.[0] || '';
+		return product;
+	}), catalogEmpty);
 	catalogState = 'loaded';
 	productGrid.hidden = false;
 	catalogStatus.hidden = true;
-	showBrand(selectedBrand);
+	applyCatalogFilter();
 });
 document.addEventListener('catalog-load-error', () => {
 	catalogState = 'error';
 	catalogStatus.textContent = 'Не удалось загрузить каталог. Попробуйте зайти позже или оставьте заявку.';
-	showBrand(selectedBrand);
+	applyCatalogFilter();
 });
 brandFilters.forEach((filter) => {
 	filter.addEventListener('click', () => showBrand(filter.dataset.brandFilter));
 });
-clearBrandFilter.addEventListener('click', () => showBrand(''));
+clearBrandFilter.addEventListener('click', () => {
+	selectedBrand = '';
+	selectedCategory = '';
+	applyCatalogFilter();
+});
 productGrid.addEventListener('click', (event) => {
 	const orderButton = event.target.closest('.product .mini-btn');
 	if (orderButton) {

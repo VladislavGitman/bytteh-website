@@ -9,6 +9,12 @@ Out-of-stock products have an availability inquiry button that opens the
 request form and a direct phone link. Selecting a brand filters its models
 regardless of stock.
 
+The quick-picker category selector also filters the catalog and scrolls to its
+product cards when submitted. Categories are matched from the Firestore
+`category`, `model`, and `description` text: refrigerator/freezer terms,
+dishwasher terms, washing-machine terms, and cooktop/induction/stove terms map
+to the corresponding picker categories.
+
 Each document must contain:
 
 | Field | Type | Example |
