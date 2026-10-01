@@ -132,6 +132,7 @@ const updatePicker = () => {
 pickerForm.addEventListener('submit', (event) => {
 	event.preventDefault();
 	updatePicker();
+	selectedBudget = Number(pickerBudget.value);
 	showCategory(pickerCategory.value);
 	document.querySelector('#catalog').scrollIntoView({behavior: 'smooth'});
 	history.replaceState(null, '', '#catalog');
@@ -232,35 +233,36 @@ const categoryPatterns = {
 };
 let selectedBrand = '';
 let selectedCategory = '';
+let selectedBudget = null;
 let catalogState = 'loading';
 const applyCatalogFilter = () => {
 	const products = [...productGrid.querySelectorAll('.product')];
 	let visibleProducts = 0;
 	products.forEach((product) => {
-		const isVisible = selectedBrand
-			? product.dataset.brand?.toLowerCase() === selectedBrand.toLowerCase()
-			: !selectedCategory || product.dataset.categoryKey === selectedCategory;
+		const matchesBrand = !selectedBrand || product.dataset.brand?.toLowerCase() === selectedBrand.toLowerCase();
+		const matchesCategory = !selectedCategory || product.dataset.categoryKey === selectedCategory;
+		const matchesBudget = selectedBudget === null || Number(product.dataset.price) <= selectedBudget;
+		const isVisible = matchesBrand && matchesCategory && matchesBudget;
 		product.hidden = !isVisible;
 		if (isVisible) visibleProducts += 1;
 	});
-	const activeFilter = selectedBrand || selectedCategory;
-	catalogEmpty.textContent = selectedBrand
-		? `В каталоге пока нет моделей бренда ${selectedBrand}.`
-		: selectedCategory
-			? `В каталоге пока нет моделей категории «${categoryLabels[selectedCategory]}».`
-			: 'Каталог пока пуст.';
+	const activeFilter = selectedBrand || selectedCategory || selectedBudget !== null;
+	const filterDescription = [
+		selectedBrand,
+		selectedCategory ? categoryLabels[selectedCategory] : '',
+		selectedBudget !== null ? `до ${formatPrice(selectedBudget)}` : ''
+	].filter(Boolean).join(' · ');
+	catalogEmpty.textContent = filterDescription
+		? `По выбранным условиям (${filterDescription}) товаров не найдено.`
+		: 'Каталог пока пуст.';
 	catalogEmpty.hidden = catalogState !== 'loaded' || visibleProducts > 0;
 	catalogStatus.hidden = catalogState !== 'loading' && catalogState !== 'error';
-	catalogTitle.textContent = selectedBrand
-		? `Модели ${selectedBrand}`
-		: selectedCategory
-			? categoryLabels[selectedCategory]
-			: 'Популярные модели';
-	catalogDescription.textContent = selectedBrand
-		? `Модели бренда ${selectedBrand}: товары в наличии и под заказ.`
-		: selectedCategory
-			? `Товары категории «${categoryLabels[selectedCategory]}» с фотографиями, наличием и ценами.`
-			: 'Техника в наличии и под заказ для кухни, дома и повседневных задач.';
+	catalogTitle.textContent = filterDescription
+		? `Каталог: ${filterDescription}`
+		: 'Популярные модели';
+	catalogDescription.textContent = filterDescription
+		? `Показаны товары, подходящие под выбранные условия: ${filterDescription}.`
+		: 'Техника в наличии и под заказ для кухни, дома и повседневных задач.';
 	clearBrandFilter.hidden = !activeFilter;
 	brandFilters.forEach((filter) => {
 		if (filter.dataset.brandFilter === selectedBrand) filter.setAttribute('aria-current', 'true');
@@ -269,11 +271,9 @@ const applyCatalogFilter = () => {
 };
 const showBrand = (brand) => {
 	selectedBrand = brand;
-	selectedCategory = '';
 	applyCatalogFilter();
 };
 function showCategory(category) {
-	selectedBrand = '';
 	selectedCategory = category;
 	applyCatalogFilter();
 }
@@ -281,6 +281,7 @@ document.addEventListener('catalog-loaded', (event) => {
 	const items = event.detail;
 	productGrid.replaceChildren(...items.map((item) => {
 		const product = createProductCard(item);
+		product.dataset.price = String(item.price);
 		const searchableCategory = `${item.category} ${item.model} ${item.description}`.toLowerCase();
 		product.dataset.categoryKey = Object.entries(categoryPatterns)
 			.find(([, pattern]) => pattern.test(searchableCategory))?.[0] || '';
@@ -302,6 +303,7 @@ brandFilters.forEach((filter) => {
 clearBrandFilter.addEventListener('click', () => {
 	selectedBrand = '';
 	selectedCategory = '';
+	selectedBudget = null;
 	applyCatalogFilter();
 });
 productGrid.addEventListener('click', (event) => {

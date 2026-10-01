@@ -9,11 +9,14 @@ Out-of-stock products have an availability inquiry button that opens the
 request form and a direct phone link. Selecting a brand filters its models
 regardless of stock.
 
-The quick-picker category selector also filters the catalog and scrolls to its
-product cards when submitted. Categories are matched from the Firestore
-`category`, `model`, and `description` text: refrigerator/freezer terms,
-dishwasher terms, washing-machine terms, and cooktop/induction/stove terms map
-to the corresponding picker categories.
+Submitting the quick picker filters the catalog by the selected category and
+maximum budget, then scrolls to the product cards. Clicking a brand adds that
+filter without clearing category or budget, and submitting the quick picker
+after selecting a brand preserves the brand filter. The filters combine, so
+only products matching every selected criterion are shown. Categories are
+matched from Firestore `category`, `model`, and `description` text:
+refrigerator/freezer terms, dishwasher terms, washing-machine terms, and
+cooktop/induction/stove terms map to the corresponding picker categories.
 If an image is not set for Liebherr, Miele, Siemens, or Bosch, the catalog uses
 the matching local card image when available.
 
