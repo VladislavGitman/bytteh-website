@@ -51,6 +51,8 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 .catalog-empty{grid-column:1/-1;margin:0;padding:24px;border:1px solid var(--line);border-radius:18px;background:var(--white);color:var(--muted)}
 .catalog-empty[hidden],#clear-brand-filter[hidden]{display:none}
 .catalog-status{grid-column:1/-1;margin:0;color:var(--muted)}
+.catalog-notice{margin:0 0 16px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--soft);color:var(--text)}
+.catalog-notice[hidden]{display:none}
 .product-grid[hidden]{display:none}
 .product[hidden]{display:none}
 .stock-count{display:block;margin-top:8px;color:var(--muted);font-size:.88rem}
@@ -132,8 +134,7 @@ const updatePicker = () => {
 pickerForm.addEventListener('submit', (event) => {
 	event.preventDefault();
 	updatePicker();
-	selectedBudget = Number(pickerBudget.value);
-	showCategory(pickerCategory.value);
+	applyPickerFilters();
 	document.querySelector('#catalog').scrollIntoView({behavior: 'smooth'});
 	history.replaceState(null, '', '#catalog');
 });
@@ -143,7 +144,11 @@ const prepareOrder = (request) => {
 	orderRequestInput.value = request || 'Консультация по технике';
 	if (contactTitle) contactTitle.textContent = `Заказать: ${orderRequestInput.value}`;
 };
-pickerOrder.addEventListener('click', () => prepareOrder(pickerOrder.dataset.request));
+pickerOrder.addEventListener('click', () => {
+	updatePicker();
+	applyPickerFilters();
+	prepareOrder(pickerOrder.dataset.request);
+});
 const catalogTitle = document.querySelector('#catalog-title');
 const catalogDescription = document.querySelector('#catalog-description');
 const clearBrandFilter = document.querySelector('#clear-brand-filter');
@@ -154,6 +159,12 @@ catalogStatus.setAttribute('role', 'status');
 catalogStatus.setAttribute('aria-live', 'polite');
 catalogStatus.textContent = 'Загружаем каталог...';
 productGrid.before(catalogStatus);
+const catalogNotice = document.createElement('p');
+catalogNotice.className = 'catalog-notice';
+catalogNotice.setAttribute('role', 'status');
+catalogNotice.setAttribute('aria-live', 'polite');
+catalogNotice.hidden = true;
+productGrid.before(catalogNotice);
 const catalogEmpty = document.createElement('p');
 catalogEmpty.className = 'catalog-empty';
 catalogEmpty.hidden = true;
@@ -235,8 +246,20 @@ let selectedBrand = '';
 let selectedCategory = '';
 let selectedBudget = null;
 let catalogState = 'loading';
+let catalogNoticeMessage = '';
 const applyCatalogFilter = () => {
 	const products = [...productGrid.querySelectorAll('.product')];
+	if (catalogState === 'loaded' && selectedBrand && selectedCategory) {
+		const hasBrandCategoryMatch = products.some((product) =>
+			product.dataset.brand?.toLowerCase() === selectedBrand.toLowerCase()
+			&& product.dataset.categoryKey === selectedCategory
+		);
+		if (!hasBrandCategoryMatch) {
+			catalogNoticeMessage = `У бренда ${selectedBrand} нет товаров категории «${categoryLabels[selectedCategory]}». Показаны все товары бренда без фильтра категории и бюджета.`;
+			selectedCategory = '';
+			selectedBudget = null;
+		}
+	}
 	let visibleProducts = 0;
 	products.forEach((product) => {
 		const matchesBrand = !selectedBrand || product.dataset.brand?.toLowerCase() === selectedBrand.toLowerCase();
@@ -257,6 +280,8 @@ const applyCatalogFilter = () => {
 		: 'Каталог пока пуст.';
 	catalogEmpty.hidden = catalogState !== 'loaded' || visibleProducts > 0;
 	catalogStatus.hidden = catalogState !== 'loading' && catalogState !== 'error';
+	catalogNotice.textContent = catalogNoticeMessage;
+	catalogNotice.hidden = !catalogNoticeMessage;
 	catalogTitle.textContent = filterDescription
 		? `Каталог: ${filterDescription}`
 		: 'Популярные модели';
@@ -271,11 +296,17 @@ const applyCatalogFilter = () => {
 };
 const showBrand = (brand) => {
 	selectedBrand = brand;
+	catalogNoticeMessage = '';
 	applyCatalogFilter();
 };
 function showCategory(category) {
 	selectedCategory = category;
+	catalogNoticeMessage = '';
 	applyCatalogFilter();
+}
+function applyPickerFilters() {
+	selectedBudget = Number(pickerBudget.value);
+	showCategory(pickerCategory.value);
 }
 document.addEventListener('catalog-loaded', (event) => {
 	const items = event.detail;
@@ -304,6 +335,7 @@ clearBrandFilter.addEventListener('click', () => {
 	selectedBrand = '';
 	selectedCategory = '';
 	selectedBudget = null;
+	catalogNoticeMessage = '';
 	applyCatalogFilter();
 });
 productGrid.addEventListener('click', (event) => {

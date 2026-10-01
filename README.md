@@ -10,13 +10,21 @@ request form and a direct phone link. Selecting a brand filters its models
 regardless of stock.
 
 Submitting the quick picker filters the catalog by the selected category and
-maximum budget, then scrolls to the product cards. Clicking a brand adds that
-filter without clearing category or budget, and submitting the quick picker
-after selecting a brand preserves the brand filter. The filters combine, so
-only products matching every selected criterion are shown. Categories are
-matched from Firestore `category`, `model`, and `description` text:
+maximum budget, then scrolls to the product cards. Ordering directly from the
+quick picker also applies its category and budget filters before opening the
+request form. Clicking a brand adds that filter without clearing category or
+budget, and submitting the quick picker after selecting a brand preserves the
+brand filter. The filters combine, so only products matching every selected
+criterion are shown. Categories are matched from Firestore `category`, `model`,
+and `description` text:
 refrigerator/freezer terms, dishwasher terms, washing-machine terms, and
 cooktop/induction/stove terms map to the corresponding picker categories.
+If a selected brand has no products in the selected category, the category and
+budget filters are cleared and all products from the selected brand are shown
+with an explanation, rather than implying that the brand sells an unrelated
+product. If the brand has products in the selected category but none are
+within budget, the combined filters remain active and the empty result is
+shown.
 If an image is not set for Liebherr, Miele, Siemens, or Bosch, the catalog uses
 the matching local card image when available.
 
