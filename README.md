@@ -48,3 +48,21 @@ for model details. This allows incomplete listings to remain visible.
 Publish `firestore.rules` to Firebase for the website to read the public
 catalog. Catalog documents are read-only from the website; manage inventory
 from the Firebase Console or a trusted Admin SDK.
+
+
+## ИИ-чат
+
+The floating BYTTEHMD assistant is served by the Vercel Function at `/api/chat`.
+The browser keeps up to 40 chat messages in its local storage; chat history is not written to Firestore.
+The widget is hidden on GitHub Pages because that static host cannot serve the API function.
+
+To enable the assistant, deploy this repository on Vercel and add `OPENROUTER_KEYS`
+in the Vercel project Environment Variables. Enter the OpenRouter API keys as a
+comma-separated list in the encrypted/sensitive value field, then redeploy. Keep
+the keys out of GitHub and browser code. The function also accepts the optional `OPENROUTER_MODEL` variable; its
+default is `openrouter/auto`. Keep the website and API on the same Vercel
+project/domain so the browser can call `/api/chat`.
+
+The existing Firebase project `bytteh-website` remains responsible for the
+`products` catalog and `orders` collection. The chat widget does not change
+Firestore rules or database records.
