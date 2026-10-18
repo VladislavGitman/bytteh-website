@@ -52,17 +52,27 @@ from the Firebase Console or a trusted Admin SDK.
 
 ## ИИ-чат
 
-The floating BYTTEHMD assistant is served by the Vercel Function at `/api/chat`.
+The floating BYTTEHMD assistant calls `/api/chat`. The repository includes both
+the original Vercel Function (`api/chat.js`) and a Cloudflare Pages Function
+(`functions/api/chat.js`), so the same browser code works on either host.
 The browser keeps up to 40 chat messages in its local storage; chat history is not written to Firestore.
-The widget is hidden on GitHub Pages because that static host cannot serve the API function.
+GitHub Pages cannot serve the API function, so use the site URL from Vercel or
+Cloudflare Pages to use the assistant.
 
-To enable the assistant, deploy this repository on Vercel and add `OPENROUTER_KEYS`
-in the Vercel project Environment Variables. Enter the OpenRouter API keys as a
-comma-separated list in the encrypted/sensitive value field, then redeploy. Keep
-the keys out of GitHub and browser code. The function also accepts the optional `OPENROUTER_MODEL` variable; its
-default is `openrouter/auto`. Keep the website and API on the same Vercel
-project/domain so the browser can call `/api/chat`.
+To host on Cloudflare Pages, connect this repository using the Git integration,
+set the production branch to `main`, leave the framework preset unset, use
+`exit 0` as the build command, and use `.` as the build output directory. Pages
+will detect the `functions/` directory and route `/api/chat` to the Function.
+Add `OPENROUTER_KEYS` as an encrypted secret under Settings → Variables and
+Secrets for Preview first. Preview deployments come from non-production Git
+branches. Keep keys out of GitHub and browser code. The function also accepts
+the optional `OPENROUTER_MODEL` variable; its default is `openrouter/auto`.
+
+Do not point the live domain at a new Cloudflare deployment until its Preview
+URL and `/api/chat` have been tested. After Preview passes, connect the intended
+domain as a separate production migration step.
 
 The existing Firebase project `bytteh-website` remains responsible for the
 `products` catalog and `orders` collection. The chat widget does not change
 Firestore rules or database records.
+
