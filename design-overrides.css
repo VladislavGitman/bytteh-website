@@ -26,8 +26,12 @@ body { font-size: var(--site-body-size); }
   #top {
     scroll-margin-top: 160px;
   }
+  #request-form {
+    scroll-margin-top: 160px;
+  }
   .topbar .nav {
     min-height: 0;
+    position: relative;
     flex-wrap: wrap;
     gap: 8px 12px;
     padding-block: 9px;
@@ -47,10 +51,6 @@ body { font-size: var(--site-body-size); }
     flex-wrap: wrap;
     gap: 6px 8px;
     font-size: .78rem;
-  }
-  .topbar .nav-links a[href$="#advantages"],
-  .topbar .nav-links a[href$="#contacts"]:not(.nav-cta) {
-    display: none;
   }
   .topbar .nav-links a[href$="#brands"],
   .topbar .nav-links a[href$="#catalog"] {
@@ -94,5 +94,84 @@ body { font-size: var(--site-body-size); }
   }
   .visual-panel .quick-picker-inner {
     padding: 16px;
+  }
+}
+
+@media (max-width: 1024px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+  .topbar .nav {
+    min-height: 0;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding-block: 9px;
+  }
+  .topbar .brand {
+    gap: 8px;
+    font-size: .68rem;
+  }
+  .topbar .brand-mark {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+  .topbar .nav-links {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: center;
+    gap: 6px;
+    font-size: .68rem;
+  }
+  .topbar .nav-links > a:not(.nav-cta) {
+    min-width: 0;
+    padding-inline: 0;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .topbar .nav-links .language-switcher {
+    position: absolute;
+    top: 9px;
+    right: 48px;
+  }
+  .topbar .nav-links .theme-toggle {
+    position: absolute;
+    top: 9px;
+    right: 0;
+  }
+  .topbar .nav-links .nav-cta {
+    display: inline-flex !important;
+    position: static;
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: 38px !important;
+    margin: 4px 0 0;
+    padding-inline: 10px !important;
+    font-size: .72rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar .nav {
+    position: relative;
+    row-gap: 0;
+  }
+  .topbar .nav-links {
+    gap: 6px 4px;
+    font-size: .64rem;
+  }
+  .topbar .nav-links .nav-cta {
+    position: static;
+    margin: 4px 0 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .topbar .nav-links {
+    gap: 6px 2px;
+    font-size: .56rem;
   }
 }

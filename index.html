@@ -164,6 +164,15 @@ document.querySelectorAll('.nav-links').forEach((navigation) => {
 	switcher.append(currentLanguage, languageMenu);
 	contactLink.after(switcher);
 });
+const requestForm = document.querySelector('#request-form');
+document.querySelectorAll('.nav-cta').forEach((link) => {
+	link.href = '#request-form';
+	link.addEventListener('click', (event) => {
+		event.preventDefault();
+		history.replaceState(null, '', '#request-form');
+		requestForm.scrollIntoView({behavior: 'smooth', block: 'center'});
+	});
+});
 </script>
 <script>
 document.querySelector('.service-promo')?.remove();
