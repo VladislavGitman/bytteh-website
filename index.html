@@ -47,7 +47,7 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 .form-status{flex-basis:100%;min-height:1.5em;margin:0;color:#fff;font-size:.9rem}
 .brand-mark{width:40px;height:40px;flex:0 0 40px;border:2px solid #40366f;border-radius:50%;overflow:hidden;background:#fff;transition:background-color .25s ease,border-color .25s ease}
 .brand-mark img{display:block;width:100%;height:100%;padding:2px;object-fit:contain}
-[data-theme="dark"] .brand-mark{border-color:#a69bff;background:transparent}
+[data-theme="dark"] .brand-mark{border-color:#a69bff;background:#17181d}
 [data-theme="dark"] .brand-mark img{filter:invert(1);mix-blend-mode:screen}
 .brand-box{background:#e4e5ea;color:#111;border-color:#d3d5dc;transition:background-color .25s ease,border-color .25s ease}
 [data-brand-filter]:hover,[data-brand-filter]:focus-visible{background:#d7d9e2;border-color:var(--accent);outline:2px solid transparent}
@@ -88,6 +88,19 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 @media(max-width:640px){#byttehmd-ai-launcher{right:16px;bottom:16px;width:54px;height:54px}#byttehmd-ai-panel{right:12px;bottom:82px;width:calc(100vw - 24px);height:min(620px,calc(100dvh - 104px))}}
 @media(prefers-reduced-motion:reduce){#byttehmd-ai-launcher{transition:none}}
 </style>
+<style>
+.language-switcher{position:relative;flex:0 0 auto;font-size:.82rem}
+.language-switcher summary{min-width:48px;height:42px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:var(--white);color:var(--text);font-weight:700;cursor:pointer;list-style:none}
+.language-switcher summary::-webkit-details-marker{display:none}
+.language-switcher summary::after{content:"⌄";font-size:.75rem}
+.language-switcher summary:focus-visible{outline:3px solid color-mix(in srgb,var(--focus) 45%,transparent);outline-offset:3px}
+.language-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;z-index:10;min-width:80px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--white);box-shadow:var(--shadow)}
+.language-switcher:hover .language-menu,.language-switcher:focus-within .language-menu,.language-switcher[open] .language-menu{display:block}
+.language-menu button{width:100%;min-height:36px;border:0;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-weight:700;text-align:center}
+.language-menu button:disabled{cursor:not-allowed;opacity:.65}
+@media(max-width:640px){.language-switcher summary{min-width:42px;height:38px;padding:0 8px}}
+</style>
+<link rel="stylesheet" href="./design-overrides.css">
 </head>
 <body __processed_b9ad8306-f9b3-45da-bc20-5ad35f1edd96__="true">
 
@@ -128,6 +141,28 @@ themeToggle.addEventListener('click', () => {
 	const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
 	localStorage.setItem('byttehmd-theme', nextTheme);
 	setTheme(nextTheme);
+});
+document.querySelectorAll('.nav-links').forEach((navigation) => {
+	const contactLink = [...navigation.querySelectorAll('a')]
+		.find((link) => link.hash === '#contacts' && !link.classList.contains('nav-cta'));
+	if (!contactLink) return;
+
+	const switcher = document.createElement('details');
+	switcher.className = 'language-switcher';
+	const currentLanguage = document.createElement('summary');
+	currentLanguage.textContent = 'RU';
+	currentLanguage.setAttribute('aria-label', 'Выбран язык: русский');
+	const languageMenu = document.createElement('div');
+	languageMenu.className = 'language-menu';
+	languageMenu.setAttribute('aria-label', 'Выбор языка');
+	const romanianOption = document.createElement('button');
+	romanianOption.type = 'button';
+	romanianOption.textContent = 'ROM';
+	romanianOption.disabled = true;
+	romanianOption.title = 'Румынская версия скоро появится';
+	languageMenu.append(romanianOption);
+	switcher.append(currentLanguage, languageMenu);
+	contactLink.after(switcher);
 });
 </script>
 <script>

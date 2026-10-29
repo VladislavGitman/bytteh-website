@@ -1,0 +1,98 @@
+/* Настройки из визуального редактора BYTTEHMD. */
+:root {
+  --site-button-radius: 60px;
+  --site-button-height: 46px;
+  --site-button-padding: 18px;
+  --site-card-radius: 22px;
+  --site-section-spacing: 92px;
+  --site-body-size: 16px;
+}
+html[data-theme="light"] {
+  --bg: #f7f7f5;
+  --white: #ffffff;
+  --text: #111111;
+  --muted: #606060;
+  --line: #e9e9e7;
+  --accent: #44445b;
+  --soft: #edf0ff;
+}
+body { font-size: var(--site-body-size); }
+.nav-cta,.btn,.btn-light,.mini-btn,.form button { border-radius:var(--site-button-radius)!important; }
+.nav-cta,.btn,.btn-light { min-height:var(--site-button-height)!important; padding-inline:var(--site-button-padding)!important; }
+.feature,.product,.stat,.brand-box,.visual-panel,.cta-block { border-radius:var(--site-card-radius)!important; }
+.section { padding-block:var(--site-section-spacing)!important; }
+
+@media (max-width: 640px) {
+  #top {
+    scroll-margin-top: 160px;
+  }
+  .topbar .nav {
+    min-height: 0;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding-block: 9px;
+  }
+  .topbar .brand {
+    gap: 8px;
+    font-size: .68rem;
+  }
+  .topbar .brand-mark {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+  .topbar .nav-links {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    font-size: .78rem;
+  }
+  .topbar .nav-links a[href$="#advantages"],
+  .topbar .nav-links a[href$="#contacts"]:not(.nav-cta) {
+    display: none;
+  }
+  .topbar .nav-links a[href$="#brands"],
+  .topbar .nav-links a[href$="#catalog"] {
+    padding-inline: 2px;
+  }
+  .topbar .nav-links .nav-cta {
+    display: inline-flex !important;
+    flex: 1 0 100%;
+    min-height: 38px !important;
+    margin-top: 2px;
+    padding-inline: 12px !important;
+    font-size: .8rem;
+  }
+  .brand-marquee-group {
+    gap: 16px;
+    padding: 8px 16px;
+    font-size: .58rem;
+    letter-spacing: .13em;
+  }
+  .brand-marquee-group span {
+    gap: 16px;
+  }
+  .hero {
+    padding: 24px 0 20px;
+  }
+  .hero-grid {
+    gap: 22px;
+  }
+  .hero h1 {
+    margin: 10px 0 14px;
+    font-size: clamp(2rem, 9.5vw, 2.7rem);
+    line-height: 1.04;
+    letter-spacing: -.06em;
+    text-wrap: balance;
+  }
+  .hero .lead {
+    font-size: .96rem;
+  }
+  .visual-panel {
+    padding: 10px;
+  }
+  .visual-panel .quick-picker-inner {
+    padding: 16px;
+  }
+}
