@@ -95,7 +95,7 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 .language-switcher summary::after{content:"⌄";font-size:.75rem}
 .language-switcher summary:focus-visible{outline:3px solid color-mix(in srgb,var(--focus) 45%,transparent);outline-offset:3px}
 .language-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;z-index:10;min-width:80px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--white);box-shadow:var(--shadow)}
-.language-switcher:hover .language-menu,.language-switcher:focus-within .language-menu,.language-switcher[open] .language-menu{display:block}
+.language-switcher:hover .language-menu,.language-switcher[open] .language-menu{display:block}
 .language-menu button{width:100%;min-height:36px;border:0;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-weight:700;text-align:center}
 .language-menu button:disabled{cursor:not-allowed;opacity:.65}
 @media(max-width:640px){.language-switcher summary{min-width:42px;height:38px;padding:0 8px}}
@@ -157,7 +157,7 @@ document.querySelectorAll('.nav-links').forEach((navigation) => {
 	languageMenu.setAttribute('aria-label', 'Выбор языка');
 	const romanianOption = document.createElement('button');
 	romanianOption.type = 'button';
-	romanianOption.textContent = 'ROM';
+	romanianOption.textContent = 'RO';
 	romanianOption.disabled = true;
 	romanianOption.title = 'Румынская версия скоро появится';
 	languageMenu.append(romanianOption);
@@ -165,12 +165,17 @@ document.querySelectorAll('.nav-links').forEach((navigation) => {
 	contactLink.after(switcher);
 });
 const requestForm = document.querySelector('#request-form');
+const requestSection = requestForm.closest('.cta-block');
 document.querySelectorAll('.nav-cta').forEach((link) => {
 	link.href = '#request-form';
 	link.addEventListener('click', (event) => {
 		event.preventDefault();
 		history.replaceState(null, '', '#request-form');
-		requestForm.scrollIntoView({behavior: 'smooth', block: 'center'});
+		const isCompactLayout = window.matchMedia('(max-width: 1024px)').matches;
+		(isCompactLayout ? requestSection : requestForm).scrollIntoView({
+			behavior: 'smooth',
+			block: isCompactLayout ? 'start' : 'center'
+		});
 	});
 });
 </script>
