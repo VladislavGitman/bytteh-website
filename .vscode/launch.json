@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "BYTTEHMD: редактор дизайна",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tools/vscode-design-editor",
+        "${workspaceFolder}"
+      ]
+    }
+  ]
+}

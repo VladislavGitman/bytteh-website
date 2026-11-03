@@ -1,0 +1,16 @@
+{
+  "name": "byttehmd-design-editor",
+  "displayName": "BYTTEHMD Design Editor",
+  "description": "Визуальная настройка дизайна сайта BYTTEHMD прямо в VS Code",
+  "version": "1.0.0",
+  "publisher": "byttehmd-local",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "activationEvents": ["onCommand:byttehmd.openDesignEditor"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "byttehmd.openDesignEditor", "title": "BYTTEHMD: Открыть визуальный редактор дизайна" }
+    ]
+  }
+}
