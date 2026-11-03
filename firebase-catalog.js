@@ -40,6 +40,7 @@ const readProduct = (documentSnapshot) => {
 	}
 
 	return {
+		id: documentSnapshot.id,
 		brand: data.brand.trim(),
 		model: data.model?.trim() || data.brand.trim(),
 		category: data.category.trim(),
