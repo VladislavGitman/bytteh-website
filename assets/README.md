@@ -64,3 +64,10 @@ bytteh-website/
     ├── siemens-iq300.jpg
     └── neff-n70.jpg
 ```
+
+## Логотипы бегущей дорожки
+
+- `miele-logo.svg`, `aeg-logo.svg`, `siemens-logo.svg` и `bosch-logo.svg` — логотипы из Wikimedia Commons: [Miele](https://commons.wikimedia.org/wiki/File:Miele_logo.svg), [AEG](https://commons.wikimedia.org/wiki/File:AEG_Logo_Red_CMYK.svg), [Siemens](https://commons.wikimedia.org/wiki/File:Siemens_AG_logo.svg), [Bosch](https://commons.wikimedia.org/wiki/File:Bosch-Logo.svg).
+- `delonghi-logo.webp`, `jura-logo.webp`, `nivona-logo.webp` и `saeco-logo.webp` взяты с сайта [coffrestore.md](https://coffrestore.md/).
+- `liebherr-logo.svg` — [Liebherr logo](https://commons.wikimedia.org/wiki/File:Liebherr_logo.svg), Wikimedia Commons.
+- `neff-logo.svg` — [NEFF Logo EN.svg](https://commons.wikimedia.org/wiki/File:NEFF_Logo_EN.svg), NEFF Company, лицензия [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
