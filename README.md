@@ -56,6 +56,9 @@ The floating BYTTEHMD assistant calls `/api/chat`. The repository includes both
 the original Vercel Function (`api/chat.js`) and a Cloudflare Pages Function
 (`functions/api/chat.js`), so the same browser code works on either host.
 The browser keeps up to 40 chat messages in its local storage; chat history is not written to Firestore.
+When Firestore loads the public product catalog, the chat sends a bounded snapshot
+of product names, categories, descriptions, prices, and stock with each request.
+The server filters those fields before adding them as catalog context for the assistant.
 GitHub Pages cannot serve the API function, so use the site URL from Vercel or
 Cloudflare Pages to use the assistant.
 
