@@ -14,6 +14,8 @@ Documents live in the `products` collection. Existing legacy fields are `brand`,
 | `model` | string | `G 7100 SC` |
 | `category` | string | `Посудомоечные машины` |
 | `description` | string | Product description; omit if unknown |
+| `categoryRo` | string | Romanian category label; optional, falls back to `category` |
+| `descriptionRo` | string | Romanian product description; optional, falls back to `description` |
 | `price` | number | `25000` (required, non-negative; legacy numeric strings are converted) |
 | `stock` | integer | `1` for in-stock items; `0` for order/confirm (legacy numeric strings are converted) |
 | `dimensionsMm` | map | `{width: 600, height: 845, depth: 570}`; omit unless complete |

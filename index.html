@@ -118,6 +118,7 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 @media(max-width:640px){.language-switcher summary{min-width:42px;height:38px;padding:0 8px}}
 </style>
 <link rel="stylesheet" href="./design-overrides.css">
+<script src="./locale.js"></script>
 </head>
 <body __processed_b9ad8306-f9b3-45da-bc20-5ad35f1edd96__="true">
 
@@ -142,7 +143,7 @@ const setTheme = (theme) => {
 	const isDark = theme === 'dark';
 	document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
 	themeToggle.setAttribute('aria-pressed', String(isDark));
-	themeToggle.setAttribute('aria-label', isDark ? 'Включить светлую тему' : 'Включить ночную тему');
+	themeToggle.setAttribute('aria-label', window.BYTTEH_I18N.t(isDark ? 'Включить светлую тему' : 'Включить ночную тему'));
 	themeToggle.querySelector('.theme-icon').textContent = isDark ? '☀' : '☾';
 };
 setTheme(savedTheme || 'light');
@@ -159,17 +160,19 @@ document.querySelectorAll('.nav-links').forEach((navigation) => {
 	const switcher = document.createElement('details');
 	switcher.className = 'language-switcher';
 	const currentLanguage = document.createElement('summary');
-	currentLanguage.textContent = 'RU';
-	currentLanguage.setAttribute('aria-label', 'Выбран язык: русский');
+	currentLanguage.textContent = window.BYTTEH_I18N.locale.toUpperCase();
+	currentLanguage.setAttribute('aria-label', window.BYTTEH_I18N.locale === 'ro' ? 'Limba selectată: română' : 'Выбран язык: русский');
 	const languageMenu = document.createElement('div');
 	languageMenu.className = 'language-menu';
-	languageMenu.setAttribute('aria-label', 'Выбор языка');
-	const romanianOption = document.createElement('button');
-	romanianOption.type = 'button';
-	romanianOption.textContent = 'RO';
-	romanianOption.disabled = true;
-	romanianOption.title = 'Румынская версия скоро появится';
-	languageMenu.append(romanianOption);
+	languageMenu.setAttribute('aria-label', window.BYTTEH_I18N.t('Выбор языка'));
+	for (const [code, label] of [['ru', 'RU'], ['ro', 'RO']]) {
+		const option = document.createElement('button');
+		option.type = 'button';
+		option.textContent = label;
+		if (code === window.BYTTEH_I18N.locale) option.setAttribute('aria-current', 'true');
+		option.addEventListener('click', () => window.BYTTEH_I18N.switchLocale(code));
+		languageMenu.append(option);
+	}
 	switcher.append(currentLanguage, languageMenu);
 	contactLink.after(switcher);
 });
@@ -201,16 +204,18 @@ const pickerModel = document.querySelector('#picker-model');
 const pickerDescription = document.querySelector('#picker-description');
 const pickerPrice = document.querySelector('#picker-price');
 const pickerOrder = document.querySelector('#picker-order');
-const formatPrice = (price) => `${price.toLocaleString('ru-RU')} леев`;
+const tr = window.BYTTEH_I18N.t;
+const locale = window.BYTTEH_I18N.locale;
+const formatPrice = (price) => locale === 'ro' ? `${window.BYTTEH_I18N.number(price)} MDL` : `${price.toLocaleString('ru-RU')} леев`;
 const updatePicker = () => {
-	const pattern = {fridge: /холодил|морозил/, dishwasher: /посудомоеч|посудомой/, washer: /стиральн/, cooktop: /варочн|индукционн|плит/}[pickerCategory.value];
-	const item = catalogItems.find((product) => pattern?.test(`${product.category} ${product.model} ${product.description}`));
+	const pattern = {fridge: /холодил|морозил|frigider|congelator/i, dishwasher: /посудомоеч|посудомой|mașin.{0,12}vase/i, washer: /стиральн|mașin.{0,12}rufe/i, cooktop: /варочн|индукционн|плит|plită/i}[pickerCategory.value];
+	const item = catalogItems.find((product) => pattern?.test(`${product.category} ${product.categoryRo || ''} ${product.model} ${product.description} ${product.descriptionRo || ''}`));
 	const budget = Number(pickerBudget.value);
 	const withinBudget = item && item.price <= budget;
-	pickerModel.textContent = withinBudget ? `${item.brand} ${item.model}`.trim() : 'Уточним подходящий вариант';
-	pickerDescription.textContent = withinBudget ? item.description || item.category : 'Опубликованного товара по этим условиям пока нет. Оставьте заявку или позвоните нам.';
-	pickerPrice.textContent = withinBudget ? formatPrice(item.price) : `Бюджет до ${formatPrice(budget)}`;
-	pickerOrder.textContent = withinBudget && item.availabilityStatus === 'in_stock' ? 'Заказать' : 'Уточнить';
+	pickerModel.textContent = withinBudget ? `${item.brand} ${item.model}`.trim() : tr('Уточним подходящий вариант');
+	pickerDescription.textContent = withinBudget ? (locale === 'ro' ? item.descriptionRo || item.description || item.categoryRo || item.category : item.description || item.category) : tr('Опубликованного товара по этим условиям пока нет. Оставьте заявку или позвоните нам.');
+	pickerPrice.textContent = withinBudget ? formatPrice(item.price) : `${tr('Бюджет до')} ${formatPrice(budget)}`;
+	pickerOrder.textContent = withinBudget && item.availabilityStatus === 'in_stock' ? tr('Заказать') : tr('Уточнить');
 	pickerOrder.dataset.request = withinBudget ? `${item.brand} ${item.model}`.trim() : `Подобрать технику до ${formatPrice(budget)}`;
 	pickerOrder.href = '#contacts';
 };
@@ -224,8 +229,8 @@ pickerForm.addEventListener('submit', (event) => {
 const orderRequestInput = document.querySelector('#order-request');
 const contactTitle = document.querySelector('#contacts .cta-block h3');
 const prepareOrder = (request) => {
-	orderRequestInput.value = request || 'Консультация по технике';
-	if (contactTitle) contactTitle.textContent = `Заказать: ${orderRequestInput.value}`;
+	orderRequestInput.value = request || tr('Консультация по технике');
+	if (contactTitle) contactTitle.textContent = `${tr('Заказать')}: ${orderRequestInput.value}`;
 };
 const productRequest = new URLSearchParams(window.location.search).get('request');
 if (productRequest) {
@@ -251,7 +256,7 @@ const catalogStatus = document.createElement('p');
 catalogStatus.className = 'catalog-status';
 catalogStatus.setAttribute('role', 'status');
 catalogStatus.setAttribute('aria-live', 'polite');
-catalogStatus.textContent = 'Загружаем каталог...';
+catalogStatus.textContent = tr('Загрузка каталога...');
 productGrid.before(catalogStatus);
 const catalogEmpty = document.createElement('p');
 catalogEmpty.className = 'catalog-empty';
@@ -268,7 +273,7 @@ const createProductCard = (item) => {
 	product.className = 'product';
 	product.dataset.brand = item.brand;
 	const supportsDetailPage = Boolean(item.id) && /холодил|морозил|посудомоеч|посудомой/i.test(item.category);
-	const detailHref = supportsDetailPage ? `./product.html?id=${encodeURIComponent(item.id)}` : '';
+	const detailHref = supportsDetailPage ? `./product.html?id=${encodeURIComponent(item.id)}${locale === 'ro' ? '&lang=ro' : ''}` : '';
 	const productTitle = item.model === item.brand ? item.brand : `${item.brand} ${item.model}`;
 	const visual = document.createElement('div');
 	visual.className = 'product-visual';
@@ -283,7 +288,7 @@ const createProductCard = (item) => {
 			const imageLink = document.createElement('a');
 			imageLink.href = detailHref;
 			imageLink.className = 'product-image-link';
-			imageLink.setAttribute('aria-label', `Подробнее о ${productTitle}`);
+			imageLink.setAttribute('aria-label', `${tr('Подробнее о')} ${productTitle}`);
 			imageLink.append(image);
 			visual.append(imageLink);
 		} else {
@@ -294,7 +299,7 @@ const createProductCard = (item) => {
 	body.className = 'product-body';
 	const category = document.createElement('span');
 	category.className = 'tag';
-	category.textContent = item.category;
+	category.textContent = locale === 'ro' ? item.categoryRo || item.category : item.category;
 	const model = document.createElement('h3');
 	if (detailHref) {
 		const modelLink = document.createElement('a');
@@ -305,18 +310,18 @@ const createProductCard = (item) => {
 		model.textContent = item.model;
 	}
 	const description = document.createElement('p');
-	description.textContent = item.description;
+	description.textContent = locale === 'ro' ? item.descriptionRo || item.description : item.description;
 	const detailLink = detailHref ? document.createElement('a') : null;
 	if (detailLink) {
 		detailLink.href = detailHref;
 		detailLink.className = 'product-detail-link';
-		detailLink.textContent = 'Подробнее о модели';
+		detailLink.textContent = tr('Подробнее о модели');
 	}
 	const stock = document.createElement('span');
 	stock.className = 'stock-count';
 	stock.textContent = item.availabilityStatus === 'in_stock'
-		? `В наличии: ${item.stock} ${item.stock === 1 ? 'единица' : 'единиц'}`
-		: item.availabilityStatus === 'on_order' ? 'Под заказ' : 'Наличие уточняется';
+		? (locale === 'ro' ? `În stoc: ${item.stock} ${item.stock === 1 ? 'bucată' : 'bucăți'}` : `В наличии: ${item.stock} ${item.stock === 1 ? 'единица' : 'единиц'}`)
+		: tr(item.availabilityStatus === 'on_order' ? 'Под заказ' : 'Наличие уточняется');
 	if (item.availabilityStatus !== 'in_stock') {
 		stock.classList.add('is-unavailable');
 	}
@@ -326,16 +331,16 @@ const createProductCard = (item) => {
 	const phoneLink = document.createElement('a');
 	phoneLink.href = 'tel:+37379503566';
 	phoneLink.textContent = '+373 (79) 503-566';
-	stockNote.append(document.createTextNode('Оставьте заявку или позвоните: '), phoneLink, document.createTextNode(' — уточним сроки поставки или подберём аналог.'));
+	stockNote.append(document.createTextNode(`${tr('Оставьте заявку или позвоните:')} `), phoneLink, document.createTextNode(tr(' — уточним сроки поставки или подберём аналог.')));
 	const footer = document.createElement('div');
 	footer.className = 'product-footer';
 	const price = document.createElement('span');
 	price.className = 'price';
-	price.textContent = `${item.price.toLocaleString('ru-RU')} MDL`;
+	price.textContent = `${window.BYTTEH_I18N.number(item.price)} MDL`;
 	const orderButton = document.createElement('button');
 	orderButton.className = 'mini-btn';
 	orderButton.type = 'button';
-	orderButton.textContent = item.availabilityStatus === 'in_stock' ? 'Заказать' : 'Уточнить наличие';
+	orderButton.textContent = item.availabilityStatus === 'in_stock' ? tr('Заказать') : tr('Уточнить наличие');
 	footer.append(price, orderButton);
 	body.append(category, model, description, ...(detailLink ? [detailLink] : []), stock, stockNote, footer);
 	product.append(visual, body);
@@ -349,15 +354,17 @@ const categoryLabels = {
 	cooktop: 'Варочные панели'
 };
 const categoryPatterns = {
-	fridge: /холодил|морозильн/,
-	dishwasher: /посудомоеч|посудомой/,
-	washer: /стиральн/,
-	cooktop: /варочн|индукционн|плит/
+	fridge: /холодил|морозильн|frigider|congelator/i,
+	dishwasher: /посудомоеч|посудомой|mașin.{0,12}vase/i,
+	washer: /стиральн|mașin.{0,12}rufe/i,
+	cooktop: /варочн|индукционн|плит|plită/i
 };
+const categoryLabelsRo = { fridge: 'Frigidere', dishwasher: 'Mașini de spălat vase', washer: 'Mașini de spălat rufe', cooktop: 'Plite' };
 let selectedBrand = '';
 let selectedCategory = '';
 let selectedBudget = null;
 let catalogState = 'loading';
+Object.defineProperties(window, { BYTTEH_CATALOG_UI: { configurable: true, value: Object.defineProperties({}, { category: { get: () => selectedCategory }, budget: { get: () => selectedBudget }, brand: { get: () => selectedBrand } }) } });
 const applyCatalogFilter = () => {
 	const products = [...productGrid.querySelectorAll('.product')];
 	if (catalogState === 'loaded' && selectedBrand && selectedCategory) {
@@ -382,30 +389,30 @@ const applyCatalogFilter = () => {
 	const activeFilter = selectedBrand || selectedCategory || selectedBudget !== null;
 	const filterDescription = [
 		selectedBrand,
-		selectedCategory ? categoryLabels[selectedCategory] : '',
-		selectedBudget !== null ? `до ${formatPrice(selectedBudget)}` : ''
+		selectedCategory ? (locale === 'ro' ? categoryLabelsRo[selectedCategory] : categoryLabels[selectedCategory]) : '',
+		selectedBudget !== null ? `${tr('Бюджет до')} ${formatPrice(selectedBudget)}` : ''
 	].filter(Boolean).join(' · ');
 	catalogEmpty.replaceChildren();
 	const emptyMessage = document.createElement('span');
-	emptyMessage.textContent = filterDescription
-		? `По выбранным условиям (${filterDescription}) товаров не найдено.`
-		: 'Каталог пока пуст.';
+		emptyMessage.textContent = filterDescription
+		? (locale === 'ro' ? `Nu am găsit produse pentru criteriile selectate (${filterDescription}).` : `По выбранным условиям (${filterDescription}) товаров не найдено.`)
+		: tr('Каталог пока пуст.');
 	catalogEmpty.append(emptyMessage);
 	if (selectedBrand) {
 		const emptyContact = document.createElement('a');
 		emptyContact.href = '#contacts';
 		emptyContact.className = 'catalog-empty-contact';
-		emptyContact.textContent = `Оставить заявку на ${selectedBrand}`;
+		emptyContact.textContent = `${tr('Оставить заявку на')} ${selectedBrand}`;
 		catalogEmpty.append(document.createTextNode(' '), emptyContact);
 	}
 	catalogEmpty.hidden = catalogState !== 'loaded' || visibleProducts > 0;
 	catalogStatus.hidden = catalogState !== 'loading' && catalogState !== 'error';
 	catalogTitle.textContent = filterDescription
-		? `Каталог: ${filterDescription}`
-		: 'Популярные модели';
+		? `${tr('Каталог:')} ${filterDescription}`
+		: tr('Популярные модели');
 	catalogDescription.textContent = filterDescription
-		? `Показаны товары, подходящие под выбранные условия: ${filterDescription}.`
-		: 'Техника в наличии и под заказ для кухни, дома и повседневных задач.';
+		? (locale === 'ro' ? `Produse care corespund criteriilor: ${filterDescription}.` : `Показаны товары, подходящие под выбранные условия: ${filterDescription}.`)
+		: tr('Техника в наличии и под заказ для кухни, дома и повседневных задач.');
 	clearBrandFilter.hidden = !activeFilter;
 	brandFilters.forEach((filter) => {
 		if (filter.dataset.brandFilter === selectedBrand) filter.setAttribute('aria-current', 'true');
@@ -438,12 +445,18 @@ document.addEventListener('catalog-loaded', (event) => {
 	catalogState = 'loaded';
 	productGrid.hidden = false;
 	catalogStatus.hidden = true;
+	const previousState = window.BYTTEH_I18N.restoreFormState();
+	if (previousState) {
+		selectedBrand = previousState.brand || '';
+		selectedCategory = previousState.category || '';
+		selectedBudget = previousState.budget === null ? null : Number(previousState.budget);
+	}
 	applyCatalogFilter();
 	updatePicker();
 });
 document.addEventListener('catalog-load-error', () => {
 	catalogState = 'error';
-	catalogStatus.textContent = 'Не удалось загрузить каталог. Попробуйте зайти позже или оставьте заявку.';
+	catalogStatus.textContent = tr('Не удалось загрузить каталог. Попробуйте зайти позже или оставьте заявку.');
 	applyCatalogFilter();
 });
 brandFilters.forEach((filter) => {
@@ -459,11 +472,11 @@ productGrid.addEventListener('click', (event) => {
 	const orderButton = event.target.closest('.product .mini-btn');
 	if (orderButton) {
 		const product = orderButton.closest('.product');
-		const model = product.querySelector('h3')?.textContent.trim() || 'Техника';
+		const model = product.querySelector('h3')?.textContent.trim() || tr('Техника');
 		const price = product.querySelector('.price')?.textContent.trim() || '';
 		const needsConfirmation = product.querySelector('.stock-count')?.classList.contains('is-unavailable');
 		const request = needsConfirmation
-			? `Интересует ${product.dataset.brand}${model === product.dataset.brand ? ` — ${product.querySelector('.tag')?.textContent.trim().toLowerCase()}` : ` ${model}`}. Уточнить условия заказа и наличие.`
+			? (locale === 'ro' ? `Mă interesează ${product.dataset.brand}${model === product.dataset.brand ? ` — ${product.querySelector('.tag')?.textContent.trim().toLowerCase()}` : ` ${model}`}. ${tr('Условия заказа и наличие.')}` : `Интересует ${product.dataset.brand}${model === product.dataset.brand ? ` — ${product.querySelector('.tag')?.textContent.trim().toLowerCase()}` : ` ${model}`}. Уточнить условия заказа и наличие.`)
 			: [model, price].filter(Boolean).join(', ');
 		prepareOrder(request);
 		document.querySelector('#contacts').scrollIntoView({behavior: 'smooth'});
@@ -510,7 +523,9 @@ updatePicker();
 </section>
 <script>
 (() => {
-  const storageKey = "byttehmd-ai-chat-v1";
+  const locale = window.BYTTEH_I18N.locale;
+  const tr = window.BYTTEH_I18N.t;
+  const storageKey = locale === "ro" ? "byttehmd-ai-chat-v1-ro" : "byttehmd-ai-chat-v1";
   const maxHistory = 40;
   const panel = document.getElementById("byttehmd-ai-panel");
   const launcher = document.getElementById("byttehmd-ai-launcher");
@@ -529,7 +544,7 @@ updatePicker();
   }
   let messages = readHistory();
   let pending = false;
-  catalogStatus.textContent = "Цены и наличие проверяются по каталогу";
+  catalogStatus.textContent = tr("Цены и наличие проверяются по каталогу");
 
   function readHistory() {
     try {
@@ -547,7 +562,7 @@ updatePicker();
     try {
       localStorage.setItem(storageKey, JSON.stringify(messages));
     } catch {
-      status.textContent = "Браузер не разрешил сохранить историю на этом устройстве.";
+		status.textContent = tr("Браузер не разрешил сохранить историю на этом устройстве.");
     }
   }
 
@@ -588,20 +603,20 @@ updatePicker();
       const title = document.createElement("strong");
       title.textContent = product.model === product.brand ? product.brand : `${product.brand} ${product.model}`;
       const meta = document.createElement("span");
-      const availability = product.availabilityStatus === "in_stock" ? `В наличии: ${product.stock} ед.` : product.availabilityStatus === "on_order" ? "Под заказ" : "Наличие уточняется";
-      meta.textContent = `${product.brand} · ${new Intl.NumberFormat("ru-RU").format(product.price)} MDL · ${availability}`;
+		const availability = product.availabilityStatus === "in_stock" ? (locale === "ro" ? `În stoc: ${product.stock} ${product.stock === 1 ? "bucată" : "bucăți"}` : `В наличии: ${product.stock} ед.`) : tr(product.availabilityStatus === "on_order" ? "Под заказ" : "Наличие уточняется");
+		meta.textContent = `${product.brand} · ${window.BYTTEH_I18N.number(product.price)} MDL · ${availability}`;
       item.append(title, meta);
       const actions = document.createElement("div");
       actions.className = "byttehmd-ai-actions";
       if (product.href) {
         const detail = document.createElement("a");
         detail.href = product.href;
-        detail.textContent = "Карточка товара";
+		detail.textContent = tr("Карточка товара");
         actions.append(detail);
       }
       const request = document.createElement("a");
-      request.href = `./index.html?request=${encodeURIComponent(`Уточнить ${product.brand} ${product.model}`)}#contacts`;
-      request.textContent = product.availabilityStatus === "in_stock" ? "Оставить заявку" : "Уточнить условия";
+		request.href = `./index.html?request=${encodeURIComponent(`${tr('Уточнить')} ${product.brand} ${product.model}`)}${locale === 'ro' ? '&lang=ro' : ''}#contacts`;
+		request.textContent = product.availabilityStatus === "in_stock" ? tr("Оставить заявку") : tr("Уточнить условия");
       actions.append(request);
       item.append(actions);
       list.append(item);
@@ -613,10 +628,10 @@ updatePicker();
     item.className = "byttehmd-ai-actions";
     const order = document.createElement("a");
     order.href = "./index.html#contacts";
-    order.textContent = "Оставить заявку";
+	order.textContent = tr("Оставить заявку");
     const phone = document.createElement("a");
     phone.href = "tel:+37379503566";
-    phone.textContent = "Позвонить консультанту";
+	phone.textContent = tr("Позвонить консультанту");
     item.append(order, phone);
     list.append(item);
   }
@@ -624,7 +639,7 @@ updatePicker();
   function renderHistory() {
     list.replaceChildren();
     if (messages.length === 0) {
-      addBubble("assistant", "Здравствуйте! Помогу подобрать технику по категории, бренду, бюджету, размерам и функциям. Цены и наличие проверю по опубликованному каталогу. Если информации не хватит — задам уточняющий вопрос или предложу связаться с консультантом.");
+		addBubble("assistant", tr("Здравствуйте! Помогу подобрать технику по категории, бренду, бюджету, размерам и функциям. Цены и наличие проверю по опубликованному каталогу. Если информации не хватит — задам уточняющий вопрос или предложу связаться с консультантом."));
       return;
     }
     for (const message of messages) addBubble(message.role, message.content);
@@ -633,7 +648,7 @@ updatePicker();
   function setOpen(open) {
     panel.hidden = !open;
     launcher.setAttribute("aria-expanded", String(open));
-    launcher.setAttribute("aria-label", open ? "Свернуть ИИ-помощника" : "Открыть ИИ-помощника");
+	launcher.setAttribute("aria-label", tr(open ? "Свернуть ИИ-помощника" : "Открыть ИИ-помощника"));
     if (open) input.focus();
     else launcher.focus();
   }
@@ -650,7 +665,7 @@ updatePicker();
     input.focus();
   });
   clearButton.addEventListener("click", () => {
-    if (!messages.length || !window.confirm("Очистить историю этого чата на устройстве?")) return;
+	if (!messages.length || !window.confirm(tr("Очистить историю этого чата на устройстве?"))) return;
     messages = [];
     saveHistory();
     status.replaceChildren();
@@ -671,23 +686,24 @@ updatePicker();
     panel.setAttribute("aria-busy", "true");
     sendButton.disabled = true;
     input.disabled = true;
-    const waiting = addBubble("assistant", "Проверяю каталог и готовлю ответ…", true);
+	const waiting = addBubble("assistant", tr("Проверяю каталог и готовлю ответ…"), true);
 
     try {
       const { getTurnstileToken } = await import("./turnstile-client.js");
       const turnstileToken = await getTurnstileToken("chat");
-      const response = await fetch("/api/chat", {
+		const response = await fetch(`/api/chat${locale === "ro" ? "?lang=ro" : ""}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: messages.slice(-8),
           criteria: getCriteria(),
-          turnstileToken
+			turnstileToken,
+			locale
         })
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok || typeof payload.reply !== "string") {
-        throw new Error(payload.error || "Сервис временно недоступен.");
+		throw new Error(tr(payload.error || "Сервис временно недоступен."));
       }
       messages.push({ role: "assistant", content: payload.reply });
       saveHistory();
@@ -695,14 +711,14 @@ updatePicker();
       addBubble("assistant", payload.reply);
       addMatches(Array.isArray(payload.matches) ? payload.matches.slice(0, 3) : []);
       if (["no_matches", "needs_details"].includes(payload.state)) addContactActions();
-      catalogStatus.textContent = payload.state === "no_matches" ? "По этим условиям совпадений нет" : "Проверены опубликованные товары каталога";
+		catalogStatus.textContent = tr(payload.state === "no_matches" ? "По этим условиям совпадений нет" : "Проверены опубликованные товары каталога");
       status.replaceChildren();
     } catch (error) {
       waiting.remove();
-      status.replaceChildren(document.createTextNode(`${error.message || "Не удалось отправить вопрос."} `));
+		status.replaceChildren(document.createTextNode(`${tr(error.message || "Не удалось отправить вопрос.")} `));
       const retry = document.createElement("button");
       retry.type = "button";
-      retry.textContent = "Повторить";
+		retry.textContent = tr("Повторить");
       retry.addEventListener("click", () => form.requestSubmit(), { once: true });
       status.append(retry);
       messages.pop();
