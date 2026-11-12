@@ -1,6 +1,8 @@
 name = "byttehmd-rate-limiter"
 main = "src/index.js"
 compatibility_date = "2026-11-03"
+workers_dev = false
+preview_urls = false
 
 [[durable_objects.bindings]]
 name = "RATE_LIMITER"
@@ -11,4 +13,5 @@ tag = "v1"
 new_sqlite_classes = ["RateLimiter"]
 
 [vars]
-# Set RATE_LIMITER_TOKEN with: npx wrangler secret put RATE_LIMITER_TOKEN
+# Keep this Worker private; Pages calls it through the RATE_LIMITER service binding.
+# Set RATE_LIMITER_TOKEN only when exposing a separately protected HTTP endpoint.

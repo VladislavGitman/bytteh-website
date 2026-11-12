@@ -24,7 +24,7 @@ export class RateLimiter {
 
 	async fetch(request) {
 		if (request.method !== "POST") return Response.json({ error: "POST required" }, { status: 405 });
-		if (!this.env.RATE_LIMITER_TOKEN || request.headers.get("Authorization") !== `Bearer ${this.env.RATE_LIMITER_TOKEN}`) return Response.json({ error: "Unauthorized" }, { status: 401 });
+		if (this.env.RATE_LIMITER_TOKEN && request.headers.get("Authorization") !== `Bearer ${this.env.RATE_LIMITER_TOKEN}`) return Response.json({ error: "Unauthorized" }, { status: 401 });
 		let body;
 		try { body = await request.json(); } catch { return Response.json({ error: "Invalid JSON" }, { status: 400 }); }
 		if (!/^[a-f0-9]{64}$/.test(body.subject || "") || !LIMITS[body.kind]) return Response.json({ error: "Invalid request" }, { status: 400 });
