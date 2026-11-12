@@ -14,13 +14,13 @@ Documents live in the `products` collection. Existing legacy fields are `brand`,
 | `model` | string | `G 7100 SC` |
 | `category` | string | `Посудомоечные машины` |
 | `description` | string | Product description; omit if unknown |
-| `price` | number | `25000` (required, non-negative) |
-| `stock` | integer | `1` for in-stock items; `0` for order/confirm |
+| `price` | number | `25000` (required, non-negative; legacy numeric strings are converted) |
+| `stock` | integer | `1` for in-stock items; `0` for order/confirm (legacy numeric strings are converted) |
 | `dimensionsMm` | map | `{width: 600, height: 845, depth: 570}`; omit unless complete |
 | `features` | array of strings | `['NoFrost', 'инверторный мотор']` |
 | `image` | string | optional local path such as `./assets/miele-card.jpg` |
 
-Only complete, `published` product documents with a known availability status and price are returned. `in_stock` requires a positive integer stock. `on_order` and `confirm` require stock zero. Incomplete documents and drafts are excluded. A product with unknown dimensions or functions is excluded when those filters are requested. Prices, stock, guarantee, item condition, and delivery estimates are never inferred.
+Only complete, `published` product documents with a non-empty model, known availability status, and price are returned. Legacy numeric strings such as `"25000"` and `"1"` are converted to numbers; invalid values and fractional stock are rejected. `in_stock` requires a positive integer stock. `on_order` and `confirm` require stock zero. Incomplete documents and drafts are excluded. A product with unknown dimensions or functions is excluded when those filters are requested. Prices, stock, guarantee, item condition, and delivery estimates are never inferred.
 
 Deploy `firestore.rules` after the server credentials and API routes have been prepared. The rules deny all browser reads and writes, including `orders`. Server credentials use Google IAM and bypass these rules; grant the service account only the Firestore access required by the app and protect the secret carefully.
 

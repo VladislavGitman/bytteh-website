@@ -9,9 +9,11 @@ export function json(data, status = 200, headers = {}) {
 
 export function validProduct(id, data) {
 	if (!id || !data || data.publicationStatus !== "published" || !STATUSES.has(data.availabilityStatus)) return null;
-	const brand = clean(data.brand, 80), model = clean(data.model, 120) || brand, category = clean(data.category, 80);
-	const price = typeof data.price === "number" && Number.isFinite(data.price) && data.price >= 0 ? data.price : null;
-	const stock = Number.isInteger(data.stock) && data.stock >= 0 ? data.stock : null;
+	const brand = clean(data.brand, 80), model = clean(data.model, 120), category = clean(data.category, 80);
+	const readNumber = (value) => typeof value === "number" ? value : typeof value === "string" && value.trim() ? Number(value.trim()) : NaN;
+	const priceValue = readNumber(data.price), stockValue = readNumber(data.stock);
+	const price = Number.isFinite(priceValue) && priceValue >= 0 ? priceValue : null;
+	const stock = Number.isInteger(stockValue) && stockValue >= 0 ? stockValue : null;
 	if (!brand || !model || !category || price === null || stock === null) return null;
 	if ((data.availabilityStatus === "in_stock" && stock < 1) || (data.availabilityStatus !== "in_stock" && stock !== 0)) return null;
 	const dimensions = data.dimensionsMm && typeof data.dimensionsMm === "object" ? data.dimensionsMm : null;

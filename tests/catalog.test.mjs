@@ -15,6 +15,11 @@ test("only explicitly published products with consistent availability are public
 	assert.equal(validProduct("d", { ...base, stock: 0 }), null);
 	assert.equal(validProduct("e", { ...base, availabilityStatus: "confirm", stock: 0 }).availabilityStatus, "confirm");
 	assert.equal(validProduct("f", { ...base, price: undefined }), null);
+	assert.equal(validProduct("g", { ...base, model: "" }), null);
+	const legacy = validProduct("h", { ...base, price: "25000", stock: "1" });
+	assert.equal(legacy.price, 25000);
+	assert.equal(legacy.stock, 1);
+	assert.equal(validProduct("i", { ...base, stock: "1.5" }), null);
 });
 
 test("server match filters enforce category, brand, budget, dimensions, and features", () => {
