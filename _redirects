@@ -1,4 +1,4 @@
-/ro/ /ro 301
-/ru/ /ru 301
-/ro /index.html 200
-/ru /index.html 200
+/ro/ /?lang=ro 302
+/ru/ /?lang=ru 302
+/ro /?lang=ro 302
+/ru /?lang=ru 302
