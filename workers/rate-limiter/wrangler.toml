@@ -1,0 +1,14 @@
+name = "byttehmd-rate-limiter"
+main = "src/index.js"
+compatibility_date = "2026-11-03"
+
+[[durable_objects.bindings]]
+name = "RATE_LIMITER"
+class_name = "RateLimiter"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["RateLimiter"]
+
+[vars]
+# Set RATE_LIMITER_TOKEN with: npx wrangler secret put RATE_LIMITER_TOKEN

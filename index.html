@@ -90,7 +90,19 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 #byttehmd-ai-send{min-height:44px;padding:0 14px;border:0;border-radius:14px;background:var(--accent,#44445b);color:#fff;font:600 .9rem Inter,Arial,sans-serif;cursor:pointer}
 #byttehmd-ai-send:disabled{opacity:.55;cursor:wait}
 #byttehmd-ai-clear{margin-right:auto;border:0;background:none;color:var(--muted,#606060);font:500 .75rem Inter,Arial,sans-serif;text-decoration:underline;cursor:pointer}
-@media(max-width:640px){#byttehmd-ai-launcher{right:16px;bottom:16px;width:54px;height:54px}#byttehmd-ai-panel{right:12px;bottom:82px;width:calc(100vw - 24px);height:min(620px,calc(100dvh - 104px))}}
+.byttehmd-ai-disclosure{margin:0;padding:6px 14px;color:var(--muted,#606060);font-size:.7rem;background:var(--white,#fff)}
+.byttehmd-ai-search{padding:0 12px;background:var(--white,#fff)}
+.byttehmd-ai-search summary{padding:8px 0;color:var(--accent,#44445b);font-size:.78rem;font-weight:700;cursor:pointer}
+.byttehmd-ai-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 10px}
+.byttehmd-ai-fields label{display:grid;gap:4px;color:var(--muted,#606060);font-size:.7rem}
+.byttehmd-ai-fields input,.byttehmd-ai-fields select{width:100%;min-width:0;min-height:36px;padding:6px 8px;border:1px solid var(--line,#e9e9e7);border-radius:9px;background:var(--bg,#f7f7f5);color:var(--text,#111);font:inherit;font-size:.78rem}
+.byttehmd-ai-fields .full{grid-column:1/-1}
+.byttehmd-ai-product{align-self:stretch;display:grid;gap:5px;max-width:100%;padding:10px 12px;border:1px solid var(--line,#e9e9e7);border-radius:12px;background:var(--white,#fff);font-size:.78rem}
+.byttehmd-ai-product strong{font-size:.88rem}
+.byttehmd-ai-product a{color:var(--accent,#44445b);font-weight:700;text-underline-offset:3px}
+.byttehmd-ai-actions{display:flex;flex-wrap:wrap;gap:12px}
+#turnstile-container{position:fixed;left:-10000px;top:0;width:1px;height:1px;overflow:hidden}
+@media(max-width:640px){#byttehmd-ai-launcher{right:16px;bottom:16px;width:54px;height:54px}#byttehmd-ai-panel{right:0;bottom:0;left:0;width:100%;height:100vh;height:100dvh;max-height:100dvh;border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom)}#byttehmd-ai-messages{min-height:0}.byttehmd-ai-fields{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){#byttehmd-ai-launcher{transition:none}}
 </style>
 <style>
@@ -117,18 +129,10 @@ body{transition:background-color .25s ease,color .25s ease}.brand-marquee{backgr
 <div class="brand-marquee" aria-label="Бренды в каталоге"><div class="brand-marquee-track"><div class="brand-marquee-group"><a class="brand-logo-item" href="#catalog" data-brand-filter="Miele" aria-label="Открыть товары бренда Miele"><img src="./assets/miele-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="AEG" aria-label="Открыть товары бренда AEG"><img src="./assets/aeg-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Siemens" aria-label="Открыть товары бренда Siemens"><img src="./assets/siemens-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Bosch" aria-label="Открыть товары бренда Bosch"><img src="./assets/bosch-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Liebherr" aria-label="Открыть товары бренда Liebherr"><img src="./assets/liebherr-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Delonghi" aria-label="Открыть товары бренда Delonghi"><img src="./assets/delonghi-logo.webp" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Saeco" aria-label="Открыть товары бренда Saeco"><img src="./assets/saeco-logo.webp" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Neff" aria-label="Открыть товары бренда Neff"><img src="./assets/neff-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Jura" aria-label="Открыть товары бренда Jura"><img src="./assets/jura-logo.webp" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Nivona" aria-label="Открыть товары бренда Nivona"><img src="./assets/nivona-logo.webp" alt=""></a></div><div class="brand-marquee-group" aria-hidden="true"><a class="brand-logo-item" href="#catalog" data-brand-filter="Miele" tabindex="-1"><img src="./assets/miele-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="AEG" tabindex="-1"><img src="./assets/aeg-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Siemens" tabindex="-1"><img src="./assets/siemens-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Bosch" tabindex="-1"><img src="./assets/bosch-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Liebherr" tabindex="-1"><img src="./assets/liebherr-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Delonghi" tabindex="-1"><img src="./assets/delonghi-logo.webp" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Saeco" tabindex="-1"><img src="./assets/saeco-logo.webp" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Neff" tabindex="-1"><img src="./assets/neff-logo.svg" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Jura" tabindex="-1"><img src="./assets/jura-logo.webp" alt=""></a><a class="brand-logo-item" href="#catalog" data-brand-filter="Nivona" tabindex="-1"><img src="./assets/nivona-logo.webp" alt=""></a></div></div></div><header class="topbar"><div class="container nav"><a href="https://vladislavgitman.github.io/bytteh-website/#top" class="brand" aria-label="BYTTEHMD"><span class="brand-mark">
 	<img src="./assets/logo-bytteh.png" alt="BYTTEHMD">
 </span><span>BYTTEHMD</span></a><nav class="nav-links"><a href="https://vladislavgitman.github.io/bytteh-website/#brands">Бренды</a><a href="https://vladislavgitman.github.io/bytteh-website/#advantages">Преимущества</a><a href="https://vladislavgitman.github.io/bytteh-website/#catalog">Каталог</a><a href="https://vladislavgitman.github.io/bytteh-website/#contacts">Контакты</a><button class="theme-toggle" type="button" aria-label="Включить светлую тему" aria-pressed="true"><span class="theme-icon" aria-hidden="true">☀</span></button><a href="https://vladislavgitman.github.io/bytteh-website/#contacts" class="nav-cta">Оставить заявку</a></nav></div></header>
-<main id="top"><section class="hero"><div class="container hero-grid"><div><h1>Обслуженная техника немецких и швейцарских брендов</h1><p class="lead">В нашем каталоге представлена качественная техника Miele, Siemens, Bosch, Neff, AEG, Liebherr, Jura, Nivona, ZUG и Schulthess в отличном состоянии, готовая служить долгие годы.</p><div class="cta-row"><a href="https://vladislavgitman.github.io/bytteh-website/#catalog" class="btn">Посмотреть каталог</a><a href="https://vladislavgitman.github.io/bytteh-website/#contacts" class="btn-light">Получить консультацию</a></div><div class="stats"><div class="stat"><strong>12+ лет опыта</strong><span>Помогаем с техникой уже больше двенадцати лет.</span></div><div class="stat"><strong>Гарантия 6 месяцев</strong><span>Предоставляем гарантию на выполненные сервисные работы.</span></div><div class="stat"><strong>Мастер с выездом</strong><span>Приедем к вам для диагностики и ремонта техники.</span></div><div class="stat"><strong>Поддержка после гарантии</strong><span>Поможем с запчастями и дальнейшим обслуживанием.</span></div></div></div><div class="visual-panel"><section class="quick-picker" aria-labelledby="quick-picker-title"><div class="container quick-picker-inner"><div><span class="eyebrow">Быстрый подбор</span><h2 id="quick-picker-title">Найдём технику под ваш запрос</h2><p>Выберите категорию и максимальный бюджет — сразу увидите подходящий вариант.</p></div><form class="picker-form" id="picker-form"><label>Что нужно?<select id="picker-category"><option value="fridge">Холодильник</option><option value="dishwasher">Посудомоечная машина</option><option value="washer">Стиральная машина</option><option value="cooktop">Варочная панель</option></select></label><label>Бюджет до<select id="picker-budget"><option value="7000">7 000 леев</option><option value="10000" selected="">10 000 леев</option><option value="20000">20 000 леев</option><option value="30000">30 000 леев</option></select></label><button class="btn" type="submit">Показать вариант</button></form><div class="picker-result" id="picker-result" aria-live="polite"><span class="picker-result-label">Ваш вариант</span><strong id="picker-model">Liebherr</strong><span id="picker-description">Холодильник с морозильной камерой NoFrost</span><span class="picker-price" id="picker-price">9&nbsp;500 леев</span><a class="mini-btn" id="picker-order" href="https://vladislavgitman.github.io/bytteh-website/#contacts" data-request="Liebherr, 9&nbsp;500 леев">Заказать</a></div></div></section></div></div></section>
+<main id="top"><section class="hero"><div class="container hero-grid"><div><h1>Обслуженная техника немецких и швейцарских брендов</h1><p class="lead">В нашем каталоге представлена качественная техника Miele, Siemens, Bosch, Neff, AEG, Liebherr, Jura, Nivona, ZUG и Schulthess в отличном состоянии, готовая служить долгие годы.</p><div class="cta-row"><a href="https://vladislavgitman.github.io/bytteh-website/#catalog" class="btn">Посмотреть каталог</a><a href="https://vladislavgitman.github.io/bytteh-website/#contacts" class="btn-light">Получить консультацию</a></div><div class="stats"><div class="stat"><strong>12+ лет опыта</strong><span>Помогаем с техникой уже больше двенадцати лет.</span></div><div class="stat"><strong>Гарантия 6 месяцев</strong><span>Предоставляем гарантию на выполненные сервисные работы.</span></div><div class="stat"><strong>Мастер с выездом</strong><span>Приедем к вам для диагностики и ремонта техники.</span></div><div class="stat"><strong>Поддержка после гарантии</strong><span>Поможем с запчастями и дальнейшим обслуживанием.</span></div></div></div><div class="visual-panel"><section class="quick-picker" aria-labelledby="quick-picker-title"><div class="container quick-picker-inner"><div><span class="eyebrow">Быстрый подбор</span><h2 id="quick-picker-title">Найдём технику под ваш запрос</h2><p>Выберите категорию и максимальный бюджет — сразу увидите подходящий вариант.</p></div><form class="picker-form" id="picker-form"><label>Что нужно?<select id="picker-category"><option value="fridge">Холодильник</option><option value="dishwasher">Посудомоечная машина</option><option value="washer">Стиральная машина</option><option value="cooktop">Варочная панель</option></select></label><label>Бюджет до<select id="picker-budget"><option value="7000">7 000 леев</option><option value="10000" selected="">10 000 леев</option><option value="20000">20 000 леев</option><option value="30000">30 000 леев</option></select></label><button class="btn" type="submit">Показать вариант</button></form><div class="picker-result" id="picker-result" aria-live="polite"><span class="picker-result-label">Ваш вариант</span><strong id="picker-model">Подбираем…</strong><span id="picker-description">Загружаем опубликованные товары каталога.</span><span class="picker-price" id="picker-price"></span><a class="mini-btn" id="picker-order" href="https://vladislavgitman.github.io/bytteh-website/#contacts" data-request="Консультация по технике">Уточнить</a></div></div></section></div></div></section>
 <section id="brands" class="section"><div class="container"><div class="section-rule"><span>Бренды</span></div><div class="section-head"><h2>Популярные бренды</h2><p>Работаем только с проверенными производителями, которые ценят немецкое качество, долговечность и продуманный дизайн.</p></div><div class="brand-grid"><a class="brand-box" href="#catalog" data-brand-filter="Miele">Miele</a><a class="brand-box" href="#catalog" data-brand-filter="AEG">AEG</a><a class="brand-box" href="#catalog" data-brand-filter="Siemens">Siemens</a><a class="brand-box" href="#catalog" data-brand-filter="Bosch">Bosch</a><a class="brand-box" href="#catalog" data-brand-filter="Neff">Neff</a><a class="brand-box" href="#catalog" data-brand-filter="Liebherr">Liebherr</a><a class="brand-box" href="#catalog" data-brand-filter="Jura">Jura</a><a class="brand-box" href="#catalog" data-brand-filter="Nivona">Nivona</a><a class="brand-box" href="#catalog" data-brand-filter="Delonghi">Delonghi</a><a class="brand-box" href="#catalog" data-brand-filter="Saeco">Saeco</a></div></div></section>
 <section id="advantages" class="section"><div class="container"><div class="section-rule"><span>Преимущества</span></div><div class="section-head"><h2>Почему выбирают нас</h2><p>Мы делаем акцент на качестве, честной проверке и подборе техники под реальную жизнь вашего дома.</p></div><div class="feature-grid"><article class="feature"><div class="feature-icon">✓</div><h3>Проверка перед продажей</h3><p>Каждый прибор проходит техническую диагностику и визуальную оценку.</p></article><article class="feature"><div class="feature-icon">⚙</div><h3>Надежные бренды</h3><p>Немецкая сборка, долговечность и продуманные технологии.</p></article><article class="feature"><div class="feature-icon">⏱</div><h3>Быстрая доставка</h3><p>Доставляем и помогаем с установкой техники в удобное время.</p></article><article class="feature"><div class="feature-icon">💬</div><h3>Консультация эксперта</h3><p>Подскажем, какая техника лучше подойдет именно для вашей кухни или дома.</p></article></div></div></section>
-<section id="catalog" class="section"><div class="container"><div class="section-rule"><span>Каталог</span></div><div class="section-head"><h2 id="catalog-title">Популярные модели</h2><p id="catalog-description">Техника для кухни, дома и повседневных задач — с комфортом и качеством.</p><button class="mini-btn" id="clear-brand-filter" type="button" hidden>Показать весь каталог</button></div><div class="product-grid" hidden><article class="product" data-brand="Liebherr"><div class="product-visual">
-	<img src="./assets/liebherr.JPG" alt="Liebherr" loading="lazy" decoding="async">
-</div><div class="product-body"><span class="tag">Холодильники</span><h3>Liebherr</h3><p>Немецкий холодильник с морозильной камерой NoFrost.</p><div class="product-footer"><span class="price">9500 MDL</span><button class="mini-btn">Заказать</button></div></div></article><article class="product" data-brand="Miele"><div class="product-visual">
-	<img src="./assets/miele-card.jpg" alt="Miele" loading="lazy" decoding="async">
-</div><div class="product-body"><span class="tag">Посудомойки</span><h3>Miele</h3><p>Тихая, мощная и эффективная посудомоечная машина для современной кухни.</p><div class="product-footer"><span class="price">25000 MDL</span><button class="mini-btn">Заказать</button></div></div></article><article class="product" data-brand="Siemens"><div class="product-visual">
-	<img src="./assets/siemens-card.jpg" alt="Siemens iQ700" loading="lazy" decoding="async">
-</div><div class="product-body"><span class="tag">Стиральные</span><h3>Siemens iQ700</h3><p>Современный экономичный мотор, немецкая сборка и современный дизайн.</p><div class="product-footer"><span class="price">8000 MDL</span><button class="mini-btn">Заказать</button></div></div></article><article class="product" data-brand="Bosch"><div class="product-visual">
-	<img src="./assets/siemens-card.jpg" alt="Bosch" loading="lazy" decoding="async">
-</div><div class="product-body"><span class="tag">Плиты</span><h3>Bosch на 60 см</h3><p>Индукционная варочная панель — экономичная и надежная.</p><div class="product-footer"><span class="price">6000 MDL</span><button class="mini-btn">Заказать</button></div></div></article><p class="catalog-empty" id="catalog-empty" hidden>Сейчас в каталоге нет моделей этого бренда. Свяжитесь с нами — поможем подобрать технику.</p></div></div></section>
+<section id="catalog" class="section"><div class="container"><div class="section-rule"><span>Каталог</span></div><div class="section-head"><h2 id="catalog-title">Популярные модели</h2><p id="catalog-description">Техника для кухни, дома и повседневных задач — с комфортом и качеством.</p><button class="mini-btn" id="clear-brand-filter" type="button" hidden>Показать весь каталог</button></div><div class="product-grid" hidden></div></div></section>
 <section id="contacts" class="section"><div class="container"><div class="section-rule"><span>Контакты</span></div><div class="cta-block"><div><h3>Нужна консультация по технике?</h3><p>Оставьте заявку — и мы подберем подходящую модель, расскажем о состоянии техники и поможем сделать правильный выбор.</p></div><form class="form" id="request-form" method="post"><input id="order-name" name="name" type="text" placeholder="Ваше имя" aria-label="Ваше имя" autocomplete="name" maxlength="80" required><input id="order-phone" name="phone" type="tel" placeholder="+373(__)___-___" aria-label="Телефон" autocomplete="tel" maxlength="30" required><input id="order-request" name="request" type="hidden" value="Консультация по технике"><button type="submit">Отправить</button><p class="form-status" id="form-status" role="status" aria-live="polite"></p></form></div></div></section></main>
 <footer><div class="container footer-inner"><div>© 2026 BYTTEHMD</div><div>Обслуженная бытовая техника премиум-класса</div><div>Тел.: <a href="tel:+37379503566">+373 (79) 503-566</a></div></div></footer>
 <script>
@@ -189,12 +193,7 @@ document.querySelector('.service-promo')?.remove();
 const quickPicker = document.querySelector('.quick-picker');
 const visualPanel = document.querySelector('.visual-panel');
 if (quickPicker && visualPanel) visualPanel.replaceChildren(quickPicker);
-const pickerItems = {
-	fridge: {model: 'Liebherr', description: 'Холодильник с морозильной камерой NoFrost', price: 9500},
-	dishwasher: {model: 'Miele', description: 'Тихая посудомоечная машина для современной кухни', price: 25000},
-	washer: {model: 'Siemens iQ700', description: 'Стиральная машина с экономичным мотором', price: 8000},
-	cooktop: {model: 'Bosch на 60 см', description: 'Надёжная индукционная варочная панель', price: 6000}
-};
+let catalogItems = [];
 const pickerForm = document.querySelector('#picker-form');
 const pickerCategory = document.querySelector('#picker-category');
 const pickerBudget = document.querySelector('#picker-budget');
@@ -204,12 +203,16 @@ const pickerPrice = document.querySelector('#picker-price');
 const pickerOrder = document.querySelector('#picker-order');
 const formatPrice = (price) => `${price.toLocaleString('ru-RU')} леев`;
 const updatePicker = () => {
-	const item = pickerItems[pickerCategory.value];
+	const pattern = {fridge: /холодил|морозил/, dishwasher: /посудомоеч|посудомой/, washer: /стиральн/, cooktop: /варочн|индукционн|плит/}[pickerCategory.value];
+	const item = catalogItems.find((product) => pattern?.test(`${product.category} ${product.model} ${product.description}`));
 	const budget = Number(pickerBudget.value);
-	pickerModel.textContent = item.price <= budget ? item.model : 'Подберём вариант вручную';
-	pickerDescription.textContent = item.price <= budget ? item.description : 'Оставьте заявку, и мы найдём технику в вашем бюджете';
-	pickerPrice.textContent = item.price <= budget ? formatPrice(item.price) : `до ${formatPrice(budget)}`;
-	pickerOrder.dataset.request = item.price <= budget ? `${item.model}, ${formatPrice(item.price)}` : `Техника до ${formatPrice(budget)}`;
+	const withinBudget = item && item.price <= budget;
+	pickerModel.textContent = withinBudget ? `${item.brand} ${item.model}`.trim() : 'Уточним подходящий вариант';
+	pickerDescription.textContent = withinBudget ? item.description || item.category : 'Опубликованного товара по этим условиям пока нет. Оставьте заявку или позвоните нам.';
+	pickerPrice.textContent = withinBudget ? formatPrice(item.price) : `Бюджет до ${formatPrice(budget)}`;
+	pickerOrder.textContent = withinBudget && item.availabilityStatus === 'in_stock' ? 'Заказать' : 'Уточнить';
+	pickerOrder.dataset.request = withinBudget ? `${item.brand} ${item.model}`.trim() : `Подобрать технику до ${formatPrice(budget)}`;
+	pickerOrder.href = '#contacts';
 };
 pickerForm.addEventListener('submit', (event) => {
 	event.preventDefault();
@@ -311,16 +314,15 @@ const createProductCard = (item) => {
 	}
 	const stock = document.createElement('span');
 	stock.className = 'stock-count';
-	const stockUnit = item.stock === 1 ? 'единица' : item.stock >= 2 && item.stock <= 4 ? 'единицы' : 'единиц';
-	stock.textContent = item.stock > 0
-		? `В наличии: ${item.stock} ${stockUnit}`
-		: 'Нет в наличии · 0 ед.';
-	if (item.stock === 0) {
+	stock.textContent = item.availabilityStatus === 'in_stock'
+		? `В наличии: ${item.stock} ${item.stock === 1 ? 'единица' : 'единиц'}`
+		: item.availabilityStatus === 'on_order' ? 'Под заказ' : 'Наличие уточняется';
+	if (item.availabilityStatus !== 'in_stock') {
 		stock.classList.add('is-unavailable');
 	}
 	const stockNote = document.createElement('p');
 	stockNote.className = 'stock-note';
-	stockNote.hidden = item.stock > 0;
+	stockNote.hidden = item.availabilityStatus === 'in_stock';
 	const phoneLink = document.createElement('a');
 	phoneLink.href = 'tel:+37379503566';
 	phoneLink.textContent = '+373 (79) 503-566';
@@ -333,7 +335,7 @@ const createProductCard = (item) => {
 	const orderButton = document.createElement('button');
 	orderButton.className = 'mini-btn';
 	orderButton.type = 'button';
-	orderButton.textContent = item.stock > 0 ? 'Заказать' : 'Уточнить наличие';
+	orderButton.textContent = item.availabilityStatus === 'in_stock' ? 'Заказать' : 'Уточнить наличие';
 	footer.append(price, orderButton);
 	body.append(category, model, description, ...(detailLink ? [detailLink] : []), stock, stockNote, footer);
 	product.append(visual, body);
@@ -424,6 +426,7 @@ function applyPickerFilters() {
 }
 document.addEventListener('catalog-loaded', (event) => {
 	const items = event.detail;
+	catalogItems = items;
 	productGrid.replaceChildren(...items.map((item) => {
 		const product = createProductCard(item);
 		product.dataset.price = String(item.price);
@@ -436,6 +439,7 @@ document.addEventListener('catalog-loaded', (event) => {
 	productGrid.hidden = false;
 	catalogStatus.hidden = true;
 	applyCatalogFilter();
+	updatePicker();
 });
 document.addEventListener('catalog-load-error', () => {
 	catalogState = 'error';
@@ -457,9 +461,9 @@ productGrid.addEventListener('click', (event) => {
 		const product = orderButton.closest('.product');
 		const model = product.querySelector('h3')?.textContent.trim() || 'Техника';
 		const price = product.querySelector('.price')?.textContent.trim() || '';
-		const isOutOfStock = product.querySelector('.stock-count')?.classList.contains('is-unavailable');
-		const request = isOutOfStock
-			? `Интересует ${product.dataset.brand}${model === product.dataset.brand ? ` — ${product.querySelector('.tag')?.textContent.trim().toLowerCase()}` : ` ${model}`} (нет в наличии). Уточнить сроки поставки или подобрать аналог.`
+		const needsConfirmation = product.querySelector('.stock-count')?.classList.contains('is-unavailable');
+		const request = needsConfirmation
+			? `Интересует ${product.dataset.brand}${model === product.dataset.brand ? ` — ${product.querySelector('.tag')?.textContent.trim().toLowerCase()}` : ` ${model}`}. Уточнить условия заказа и наличие.`
 			: [model, price].filter(Boolean).join(', ');
 		prepareOrder(request);
 		document.querySelector('#contacts').scrollIntoView({behavior: 'smooth'});
@@ -471,12 +475,14 @@ updatePicker();
 <script type="module" src="./firebase-submit.js"></script>
 <script type="module" src="./firebase-catalog.js"></script>
 
+<div id="turnstile-container" aria-hidden="true"></div>
 <button id="byttehmd-ai-launcher" type="button" aria-label="Открыть ИИ-помощника" aria-controls="byttehmd-ai-panel" aria-expanded="false">✦</button>
-<section id="byttehmd-ai-panel" role="dialog" aria-labelledby="byttehmd-ai-title" hidden>
+<section id="byttehmd-ai-panel" role="dialog" aria-modal="false" aria-labelledby="byttehmd-ai-title" hidden>
   <header id="byttehmd-ai-header">
-    <div><h2 id="byttehmd-ai-title">ИИ-помощник BYTTEHMD</h2><p id="byttehmd-ai-catalog-status" role="status" aria-live="polite">Подключаем каталог…</p></div>
+    <div><h2 id="byttehmd-ai-title">ИИ-помощник BYTTEHMD</h2><p id="byttehmd-ai-catalog-status" role="status" aria-live="polite">Каталог подключается при подборе</p></div>
     <button class="byttehmd-ai-icon-button" id="byttehmd-ai-close" type="button" aria-label="Свернуть чат">×</button>
   </header>
+  <p class="byttehmd-ai-disclosure">Вы общаетесь с ИИ. Он помогает подобрать технику; цены и наличие сверяются с опубликованным каталогом.</p>
   <ol id="byttehmd-ai-messages" role="log" aria-live="polite" aria-relevant="additions text"></ol>
   <div id="byttehmd-ai-suggestions" role="group" aria-label="Примеры вопросов">
     <button type="button" data-prompt="Что есть в наличии?">В наличии</button>
@@ -484,6 +490,18 @@ updatePicker();
     <button type="button" data-prompt="Какие есть кофемашины?">Кофемашины</button>
   </div>
   <div id="byttehmd-ai-status" role="status" aria-live="polite"></div>
+  <details class="byttehmd-ai-search">
+    <summary>Уточнить параметры подбора</summary>
+    <div class="byttehmd-ai-fields">
+      <label>Категория<select id="ai-category"><option value="">Не выбрана</option><option>холодильник</option><option>посудомоечная</option><option>стиральная</option><option>варочная</option><option>кофемашина</option></select></label>
+      <label>Бренд<input id="ai-brand" maxlength="80" autocomplete="off" placeholder="Например, Miele"></label>
+      <label>Бюджет до, MDL<input id="ai-budget" type="number" min="0" max="1000000" inputmode="numeric" placeholder="Любой"></label>
+      <label>Ширина, мм<input id="ai-width" type="number" min="1" max="5000" inputmode="numeric" placeholder="Не важно"></label>
+      <label>Высота, мм<input id="ai-height" type="number" min="1" max="5000" inputmode="numeric" placeholder="Не важно"></label>
+      <label>Глубина, мм<input id="ai-depth" type="number" min="1" max="5000" inputmode="numeric" placeholder="Не важно"></label>
+      <label class="full">Функции через запятую<input id="ai-features" maxlength="240" placeholder="NoFrost, инверторный мотор"></label>
+    </div>
+  </details>
   <form id="byttehmd-ai-form">
     <button id="byttehmd-ai-clear" type="button">Очистить</button>
     <textarea id="byttehmd-ai-input" maxlength="3500" rows="1" placeholder="Напишите вопрос…" aria-label="Ваш вопрос" required></textarea>
@@ -510,22 +528,8 @@ updatePicker();
     return;
   }
   let messages = readHistory();
-  let catalogProducts = null;
   let pending = false;
-
-  document.addEventListener("catalog-loaded", (event) => {
-    catalogProducts = Array.isArray(event.detail) ? event.detail : [];
-    const count = catalogProducts.length;
-    const plural = new Intl.PluralRules("ru").select(count);
-    const itemLabel = plural === "one" ? "товар" : plural === "few" ? "товара" : "товаров";
-    catalogStatus.textContent = count === 0
-      ? "Каталог подключён, пока нет товаров"
-      : `Каталог подключён · ${count} ${itemLabel}`;
-  });
-  document.addEventListener("catalog-load-error", () => {
-    catalogProducts = null;
-    catalogStatus.textContent = "Каталог сейчас недоступен";
-  });
+  catalogStatus.textContent = "Цены и наличие проверяются по каталогу";
 
   function readHistory() {
     try {
@@ -558,10 +562,69 @@ updatePicker();
     return item;
   }
 
+  function getCriteria() {
+    const criteria = {};
+    for (const [field, id] of [["category", "ai-category"], ["brand", "ai-brand"]]) {
+      const value = document.getElementById(id).value.trim();
+      if (value) criteria[field] = value;
+    }
+    const budget = document.getElementById("ai-budget").value;
+    if (budget) criteria.maxPrice = Number(budget);
+    const dimensionsMm = {};
+    for (const key of ["width", "height", "depth"]) {
+      const value = document.getElementById(`ai-${key}`).value;
+      if (value) dimensionsMm[key] = Number(value);
+    }
+    if (Object.keys(dimensionsMm).length) criteria.dimensionsMm = dimensionsMm;
+    const features = document.getElementById("ai-features").value.split(",").map((item) => item.trim()).filter(Boolean);
+    if (features.length) criteria.features = features;
+    return criteria;
+  }
+
+  function addMatches(products) {
+    for (const product of products) {
+      const item = document.createElement("li");
+      item.className = "byttehmd-ai-product";
+      const title = document.createElement("strong");
+      title.textContent = product.model === product.brand ? product.brand : `${product.brand} ${product.model}`;
+      const meta = document.createElement("span");
+      const availability = product.availabilityStatus === "in_stock" ? `В наличии: ${product.stock} ед.` : product.availabilityStatus === "on_order" ? "Под заказ" : "Наличие уточняется";
+      meta.textContent = `${product.brand} · ${new Intl.NumberFormat("ru-RU").format(product.price)} MDL · ${availability}`;
+      item.append(title, meta);
+      const actions = document.createElement("div");
+      actions.className = "byttehmd-ai-actions";
+      if (product.href) {
+        const detail = document.createElement("a");
+        detail.href = product.href;
+        detail.textContent = "Карточка товара";
+        actions.append(detail);
+      }
+      const request = document.createElement("a");
+      request.href = `./index.html?request=${encodeURIComponent(`Уточнить ${product.brand} ${product.model}`)}#contacts`;
+      request.textContent = product.availabilityStatus === "in_stock" ? "Оставить заявку" : "Уточнить условия";
+      actions.append(request);
+      item.append(actions);
+      list.append(item);
+    }
+  }
+
+  function addContactActions() {
+    const item = document.createElement("li");
+    item.className = "byttehmd-ai-actions";
+    const order = document.createElement("a");
+    order.href = "./index.html#contacts";
+    order.textContent = "Оставить заявку";
+    const phone = document.createElement("a");
+    phone.href = "tel:+37379503566";
+    phone.textContent = "Позвонить консультанту";
+    item.append(order, phone);
+    list.append(item);
+  }
+
   function renderHistory() {
     list.replaceChildren();
     if (messages.length === 0) {
-      addBubble("assistant", "Здравствуйте! Помогу выбрать технику по каталогу и разобраться в характеристиках. Спросите о цене, наличии или подходящей модели.");
+      addBubble("assistant", "Здравствуйте! Помогу подобрать технику по категории, бренду, бюджету, размерам и функциям. Цены и наличие проверю по опубликованному каталогу. Если информации не хватит — задам уточняющий вопрос или предложу связаться с консультантом.");
       return;
     }
     for (const message of messages) addBubble(message.role, message.content);
@@ -577,6 +640,9 @@ updatePicker();
 
   launcher.addEventListener("click", () => setOpen(panel.hidden));
   closeButton.addEventListener("click", () => setOpen(false));
+  panel.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") { event.preventDefault(); setOpen(false); }
+  });
   suggestions.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-prompt]");
     if (!button || pending) return;
@@ -587,7 +653,7 @@ updatePicker();
     if (!messages.length || !window.confirm("Очистить историю этого чата на устройстве?")) return;
     messages = [];
     saveHistory();
-    status.textContent = "";
+    status.replaceChildren();
     renderHistory();
   });
 
@@ -602,24 +668,21 @@ updatePicker();
     input.value = "";
     status.textContent = "";
     pending = true;
+    panel.setAttribute("aria-busy", "true");
     sendButton.disabled = true;
-    const waiting = addBubble("assistant", "Печатаю ответ…", true);
+    input.disabled = true;
+    const waiting = addBubble("assistant", "Проверяю каталог и готовлю ответ…", true);
 
     try {
+      const { getTurnstileToken } = await import("./turnstile-client.js");
+      const turnstileToken = await getTurnstileToken("chat");
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: messages.slice(-8),
-          catalogComplete: catalogProducts !== null && catalogProducts.length <= 80,
-          catalog: catalogProducts === null ? null : catalogProducts.slice(0, 80).map((product) => ({
-            brand: product.brand,
-            model: product.model,
-            category: product.category,
-            description: product.description,
-            price: product.price,
-            stock: product.stock
-          }))
+          criteria: getCriteria(),
+          turnstileToken
         })
       });
       const payload = await response.json().catch(() => ({}));
@@ -629,13 +692,28 @@ updatePicker();
       messages.push({ role: "assistant", content: payload.reply });
       saveHistory();
       waiting.remove();
-      renderHistory();
+      addBubble("assistant", payload.reply);
+      addMatches(Array.isArray(payload.matches) ? payload.matches.slice(0, 3) : []);
+      if (["no_matches", "needs_details"].includes(payload.state)) addContactActions();
+      catalogStatus.textContent = payload.state === "no_matches" ? "По этим условиям совпадений нет" : "Проверены опубликованные товары каталога";
+      status.replaceChildren();
     } catch (error) {
       waiting.remove();
-      status.textContent = error.message || "Не удалось отправить вопрос. Попробуйте ещё раз.";
+      status.replaceChildren(document.createTextNode(`${error.message || "Не удалось отправить вопрос."} `));
+      const retry = document.createElement("button");
+      retry.type = "button";
+      retry.textContent = "Повторить";
+      retry.addEventListener("click", () => form.requestSubmit(), { once: true });
+      status.append(retry);
+      messages.pop();
+      saveHistory();
+      renderHistory();
+      input.value = question;
     } finally {
       pending = false;
+      panel.removeAttribute("aria-busy");
       sendButton.disabled = false;
+      input.disabled = false;
       input.focus();
     }
   });

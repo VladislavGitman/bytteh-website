@@ -1,80 +1,68 @@
-# BYTTEHMD catalog
+# BYTTEHMD
 
-## Product inventory in Firestore
+Static product site with server-side Cloudflare Pages Functions and Vercel API routes. The browser never reads or writes Firestore directly. `server/shared.mjs` contains the shared API implementation.
 
-The website reads product documents from the Firestore `products` collection.
-Create one document per model/listing. The public catalog shows every document,
-including products with `stock: 0`, and displays the available quantity.
-Out-of-stock products have an availability inquiry button that opens the
-request form and a direct phone link. Selecting a brand filters its models
-regardless of stock.
+## Firestore product schema
 
-Submitting the quick picker filters the catalog by the selected category and
-maximum budget, then scrolls to the product cards. Ordering directly from the
-quick picker also applies its category and budget filters before opening the
-request form. Clicking a brand adds that filter without clearing category or
-budget, and submitting the quick picker after selecting a brand preserves the
-brand filter. The filters combine, so only products matching every selected
-criterion are shown. Categories are matched from Firestore `category`, `model`,
-and `description` text:
-refrigerator/freezer terms, dishwasher terms, washing-machine terms, and
-cooktop/induction/stove terms map to the corresponding picker categories.
-If a selected brand has no products in the selected category, the category and
-budget filters are cleared and all products from the selected brand are shown.
-If the brand has products in the selected category but none are within budget,
-the combined filters remain active and the empty result is shown.
-If an image is not set for Liebherr, Miele, Siemens, or Bosch, the catalog uses
-the matching local card image when available.
+Documents live in the `products` collection. Existing legacy fields are `brand`, `model`, `category`, `description`, `price`, `stock`, and `image`. Public listing requires every document to be explicitly reviewed and marked with the new fields below. Legacy documents without those fields are deliberately hidden; no automatic publication migration is performed.
 
-Each document must contain:
-
-| Field | Type | Example |
+| Field | Type | Values / example |
 | --- | --- | --- |
+| `publicationStatus` | string | `draft` or `published` |
+| `availabilityStatus` | string | `in_stock`, `on_order`, or `confirm` |
 | `brand` | string | `Miele` |
-| `model` | string, optional | `G 7100 SC` |
+| `model` | string | `G 7100 SC` |
 | `category` | string | `Посудомоечные машины` |
-| `description` | string, optional | `Встраиваемая посудомоечная машина` |
-| `price` | number, preferably (numeric string also accepted) | `25000` |
-| `stock` | integer, zero or more (numeric string also accepted) | `1` |
-| `image` | string, optional | `./assets/miele-card.jpg` |
+| `description` | string | Product description; omit if unknown |
+| `price` | number | `25000` (required, non-negative) |
+| `stock` | integer | `1` for in-stock items; `0` for order/confirm |
+| `dimensionsMm` | map | `{width: 600, height: 845, depth: 570}`; omit unless complete |
+| `features` | array of strings | `['NoFrost', 'инверторный мотор']` |
+| `image` | string | optional local path such as `./assets/miele-card.jpg` |
 
-Use the `Number` field type for `price` and `stock` in Firestore when possible.
-Numeric strings such as `"25000"` and `"1"` are accepted and converted by the
-website, but invalid values and fractional stock quantities are rejected.
-If `model` is missing or blank, the brand is used as the card title. If
-`description` is missing or blank, the card asks customers to contact the shop
-for model details. This allows incomplete listings to remain visible.
+Only complete, `published` product documents with a known availability status and price are returned. `in_stock` requires a positive integer stock. `on_order` and `confirm` require stock zero. Incomplete documents and drafts are excluded. A product with unknown dimensions or functions is excluded when those filters are requested. Prices, stock, guarantee, item condition, and delivery estimates are never inferred.
 
-Publish `firestore.rules` to Firebase for the website to read the public
-catalog. Catalog documents are read-only from the website; manage inventory
-from the Firebase Console or a trusted Admin SDK.
+Deploy `firestore.rules` after the server credentials and API routes have been prepared. The rules deny all browser reads and writes, including `orders`. Server credentials use Google IAM and bypass these rules; grant the service account only the Firestore access required by the app and protect the secret carefully.
 
+## API and secrets
 
-## ИИ-чат
+The following server-only settings are required on the selected host (Preview first):
 
-The floating BYTTEHMD assistant calls `/api/chat`. The repository includes both
-the original Vercel Function (`api/chat.js`) and a Cloudflare Pages Function
-(`functions/api/chat.js`), so the same browser code works on either host.
-The browser keeps up to 40 chat messages in its local storage; chat history is not written to Firestore.
-When Firestore loads the public product catalog, the chat sends a bounded snapshot
-of product names, categories, descriptions, prices, and stock with each request.
-The server filters those fields before adding them as catalog context for the assistant.
-GitHub Pages cannot serve the API function, so use the site URL from Vercel or
-Cloudflare Pages to use the assistant.
+| Setting | Purpose |
+| --- | --- |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | Service account JSON stored as an encrypted secret |
+| `FIREBASE_PROJECT_ID` | Project that currently contains the website's `products` collection; may be omitted to use the project id in the service account |
+| `TURNSTILE_SECRET_KEY` | Secret used to verify Turnstile tokens on the server |
+| `TURNSTILE_SITE_KEY` | Public site key returned by `/api/config` |
+| `RATE_LIMITER_TOKEN` | Shared secret between API and the rate-limiter Worker |
+| `RATE_LIMITER_URL` | Required only on Vercel: private/secret-protected Worker endpoint URL |
+| `OPENROUTER_KEYS` | Comma-separated encrypted API keys; never place in browser code |
+| `OPENROUTER_MODEL` | Optional model override; defaults to `openrouter/auto` |
 
-To host on Cloudflare Pages, connect this repository using the Git integration,
-set the production branch to `main`, leave the framework preset unset, use
-`exit 0` as the build command, and use `.` as the build output directory. Pages
-will detect the `functions/` directory and route `/api/chat` to the Function.
-Add `OPENROUTER_KEYS` as an encrypted secret under Settings → Variables and
-Secrets for Preview first. Preview deployments come from non-production Git
-branches. Keep keys out of GitHub and browser code. The function also accepts
-the optional `OPENROUTER_MODEL` variable; its default is `openrouter/auto`.
+Routes:
 
-Do not point the live domain at a new Cloudflare deployment until its Preview
-URL and `/api/chat` have been tested. After Preview passes, connect the intended
-domain as a separate production migration step.
+- `GET /api/catalog` returns only public, valid, published products. `GET /api/catalog?id=...` returns one published card or 404.
+- `GET /api/config` returns only the public Turnstile site key.
+- `POST /api/chat` accepts up to eight recent messages, optional bounded criteria, and a Turnstile token. The server filters Firestore results and sends at most three matching products to OpenRouter. Product cards in the response are built from Firestore data, not model output.
+- `POST /api/orders` validates and writes a short request after rate-limit and Turnstile checks.
 
-The existing Firebase project `bytteh-website` remains responsible for the
-`products` catalog and `orders` collection. The chat widget does not change
-Firestore rules or database records.
+The browser stores up to 40 chat messages in `localStorage`; history and personal data are not written to logs. API routes do not log message text, phone numbers, tokens, or IP addresses. CORS/Origin is a browser policy only and is not treated as bot protection.
+
+## Cloudflare Pages setup
+
+1. Verify which Firebase project contains the existing `products` collection before creating credentials. The previous committed client configuration pointed to project `bytteh-website`, while the Firebase Console screenshot shows `byttehmd-38a40db3`; do not assume the latter contains the live catalog. Create a dedicated service account in the project with the catalog and minimum required IAM permissions. Save the entire service account JSON as the encrypted `FIREBASE_SERVICE_ACCOUNT_JSON` secret and set `FIREBASE_PROJECT_ID` to that same project, or omit it to use the service account project id. Do not commit the JSON.
+2. Create a Turnstile widget for the Preview and production hostnames. Set the server secret and site key using the names above. The browser obtains the public key from `/api/config`; verification happens server-side.
+3. Deploy the Durable Object limiter separately: from `workers/rate-limiter`, run `npx wrangler secret put RATE_LIMITER_TOKEN`, then `npx wrangler deploy`. Set the same random token as a Pages secret. Bind the deployed Worker to the Pages project as `RATE_LIMITER` (service binding) for its `/consume` endpoint. Confirm the binding name exactly matches.
+4. Connect this repository to Pages with production branch `main`, no framework preset, build command `exit 0`, and output directory `.`. Add all API secrets and public site key in Preview first. Existing Pages Functions map the routes above.
+5. Migrate catalog documents manually: inspect each old document and set publication/availability status. Do not mark drafts published without review. Add complete dimensions/features only when verified. Keep `stock` positive only for `in_stock`; use zero for `on_order` and `confirm`.
+6. Check Preview end to end, then publish the deny-all Firestore rules and verify that browser SDK requests fail. Keep an administrator path for inventory management outside this public site.
+
+The rate limiter applies 10 chat messages per 10 minutes and 40 per day per hashed IP; orders are limited to 3 per 10 minutes and 10 per day. Unknown/failed rate-limiter configuration fails closed. The Worker keeps counters in Durable Object SQLite storage and does not persist raw IP addresses. OpenRouter requests use a 450-token response limit and a bounded recent history. Configure a monthly key spend limit in OpenRouter if a hard cost ceiling is desired; this repository does not set one.
+
+## Vercel
+
+Vercel route wrappers under `api/` use the same shared implementation. Add the same secrets as Vercel environment variables. Also set `RATE_LIMITER_URL` to the deployed Worker URL and `RATE_LIMITER_TOKEN` as a secret. The Worker endpoint requires the matching bearer token. Test Preview before Production.
+
+## Local checks
+
+Run `node --test` for the server validation/filtering tests. Local API requests require the same server secrets and a configured rate limiter/Turnstile; missing settings fail closed by design. Do not use real personal data for tests.

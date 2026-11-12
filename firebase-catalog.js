@@ -1,61 +1,9 @@
-import { getApp, getApps, initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-import { collection, getDocs, getFirestore } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
-import { firebaseConfig } from './firebase-config.js';
-
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-const database = getFirestore(app);
-const requiredTextFields = ['brand', 'category'];
-
-const readNonNegativeNumber = (value, field, documentId) => {
-	const number = typeof value === 'number'
-		? value
-		: typeof value === 'string' && value.trim()
-			? Number(value)
-			: NaN;
-	if (!Number.isFinite(number) || number < 0) {
-		throw new Error(`Product ${documentId} has an invalid ${field} field.`);
-	}
-	return number;
-};
-
-const readProduct = (documentSnapshot) => {
-	const data = documentSnapshot.data();
-	for (const field of requiredTextFields) {
-		if (typeof data[field] !== 'string' || !data[field].trim()) {
-			throw new Error(`Product ${documentSnapshot.id} has an invalid ${field} field.`);
-		}
-	}
-	for (const field of ['model', 'description']) {
-		if (data[field] !== undefined && typeof data[field] !== 'string') {
-			throw new Error(`Product ${documentSnapshot.id} has an invalid ${field} field.`);
-		}
-	}
-	const price = readNonNegativeNumber(data.price, 'price', documentSnapshot.id);
-	const stock = readNonNegativeNumber(data.stock, 'stock', documentSnapshot.id);
-	if (!Number.isInteger(stock)) {
-		throw new Error(`Product ${documentSnapshot.id} has an invalid stock field.`);
-	}
-	if (data.image !== undefined && typeof data.image !== 'string') {
-		throw new Error(`Product ${documentSnapshot.id} has an invalid image field.`);
-	}
-
-	return {
-		id: documentSnapshot.id,
-		brand: data.brand.trim(),
-		model: data.model?.trim() || data.brand.trim(),
-		category: data.category.trim(),
-		description: data.description?.trim() || 'Уточните модель и характеристики у консультанта.',
-		price,
-		stock,
-		image: data.image?.trim() || ''
-	};
-};
-
 try {
-	const snapshot = await getDocs(collection(database, 'products'));
-	const products = snapshot.docs.map(readProduct);
-	document.dispatchEvent(new CustomEvent('catalog-loaded', {detail: products}));
-} catch (error) {
-	console.error('Could not load product catalog from Firestore:', error);
-	document.dispatchEvent(new CustomEvent('catalog-load-error'));
+	const response = await fetch("/api/catalog", { cache: "no-store" });
+	if (!response.ok) throw new Error("Catalog unavailable");
+	const payload = await response.json();
+	if (!Array.isArray(payload.products)) throw new Error("Invalid catalog response");
+	document.dispatchEvent(new CustomEvent("catalog-loaded", { detail: payload.products }));
+} catch {
+	document.dispatchEvent(new CustomEvent("catalog-load-error"));
 }
